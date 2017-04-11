@@ -1,0 +1,11 @@
+#ifndef __BAYONET_CONFIG_H
+#define __BAYONET_CONFIG_H
+
+//#define BAYONET_FULL_ASSERT
+
+//#define BAYONET_RCC_ASSERT
+//#define BAYONET_GPIO_ASSERT
+//#define BAYONET_UART_ASSERT
+#define BAYONET_ADC_ASSERT
+
+#endif
