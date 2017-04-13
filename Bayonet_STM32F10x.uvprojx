@@ -400,11 +400,6 @@
               <FilePath>.\Interfaces\Src\Bayonet_GPIO.c</FilePath>
             </File>
             <File>
-              <FileName>Bayonet_LED.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Interfaces\Src\Bayonet_LED.c</FilePath>
-            </File>
-            <File>
               <FileName>Bayonet_NVIC.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Interfaces\Src\Bayonet_NVIC.c</FilePath>

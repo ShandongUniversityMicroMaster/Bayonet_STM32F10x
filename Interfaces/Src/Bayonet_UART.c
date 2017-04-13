@@ -2,8 +2,9 @@
 #include <stdio.h>
 #include "Bayonet_NVIC.h"
 #include "Bayonet_RCC.h"
-#include "Bayonet_LED.h"
 #include "Bayonet_Delay.h"
+
+uint8_t bayonetUsartPortMode[5] = {0};
 
 #if 1
 #pragma import(__use_no_semihosting)
@@ -32,12 +33,10 @@ int fputc(int ch, FILE *f)
 
 void AssertFailed(char *str)
 {
-	Bayonet_LED_Init(Bayonet_LED0 | Bayonet_LED1 | Bayonet_LED2 | Bayonet_LED3);
 	while(1)
 	{
 		Bayonet_Delay_Ms(100);
 		printf("Assert Failed!:%s\r\n", str);
-		Bayonet_LED_Turn(Bayonet_LED0 | Bayonet_LED1 | Bayonet_LED2 | Bayonet_LED3);
 	}
 }
 
@@ -51,6 +50,10 @@ void UART_NVIC_Configuration(USART_TypeDef *USARTx, uint8_t PrePriority, uint8_t
 		channel = USART2_IRQn;
 	else if(USARTx == USART3)
 		channel = USART3_IRQn;
+	else if(USARTx == UART4)
+		channel = UART4_IRQn;
+	else if(USARTx == UART5)
+		channel = UART5_IRQn;
 	
 	Bayonet_NVIC_Init(channel, PrePriority, SubPriority);
 }
@@ -69,25 +72,19 @@ void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound)
 	
 	if(USARTx == USART1)
 	{
-		/*  CLOCK  */
 		RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
 		RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
-		/*   GPIO Port Configuration   */
-		GPIOA->CRH &=~ (GPIO_CRH_MODE9 | GPIO_CRH_CNF9 | GPIO_CRH_MODE10 | GPIO_CRH_CNF10);  //坑爹的运算符优先级
+		GPIOA->CRH &=~ (GPIO_CRH_MODE9 | GPIO_CRH_CNF9 | GPIO_CRH_MODE10 | GPIO_CRH_CNF10); 
 		GPIOA->CRH |= GPIO_CRH_MODE9 | GPIO_CRH_CNF9_1 | GPIO_CRH_CNF10_1;
-		/*  Reset USART Port  */
 		RCC->APB2RSTR |= RCC_APB2RSTR_USART1RST;
 		RCC->APB2RSTR &=~ RCC_APB2RSTR_USART1RST;
 	}
 	else if(USARTx == USART2)
 	{
-		/*   CLOCK   */
 		RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
 		RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
-		/*   GPIO Port Configuration   */
 		GPIOA->CRL &=~ (GPIO_CRL_MODE2 | GPIO_CRL_CNF2 | GPIO_CRL_MODE3 | GPIO_CRL_CNF3);
 		GPIOA->CRL |= GPIO_CRL_MODE2 | GPIO_CRL_CNF2_1 | GPIO_CRL_CNF3_1;
-		/*  Reset USART Port  */
 		RCC->APB1RSTR |= RCC_APB1RSTR_USART2RST;
 		RCC->APB1RSTR &=~ RCC_APB1RSTR_USART2RST;
 	}
@@ -95,6 +92,31 @@ void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound)
 	{
 		RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
 		RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
+		GPIOB->CRH &=~ (GPIO_CRH_MODE10 | GPIO_CRH_CNF10 | GPIO_CRH_MODE11 | GPIO_CRH_CNF11);
+		GPIOB->CRH |= GPIO_CRH_MODE10 | GPIO_CRH_CNF10_1 | GPIO_CRH_CNF11_1;
+		RCC->APB1RSTR |= RCC_APB1RSTR_USART3RST;
+		RCC->APB1RSTR &=~ RCC_APB1RSTR_USART3RST;
+	}
+	else if(USARTx == UART4)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
+		RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
+		GPIOC->CRH &=~ (GPIO_CRH_MODE10 | GPIO_CRH_CNF10 | GPIO_CRH_MODE11 | GPIO_CRH_CNF11);
+		GPIOC->CRH |= GPIO_CRH_MODE10 | GPIO_CRH_CNF10_1 | GPIO_CRH_CNF11_1;
+		RCC->APB1RSTR |= RCC_APB1RSTR_UART4RST;
+		RCC->APB1RSTR &=~ RCC_APB1RSTR_UART4RST;
+	}
+	else if(USARTx == UART5)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_UART5EN;
+		RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
+		RCC->APB2ENR |= RCC_APB2ENR_IOPDEN;
+		GPIOC->CRH &=~ (GPIO_CRH_MODE12 | GPIO_CRH_CNF12);
+		GPIOC->CRH |= GPIO_CRH_MODE12 | GPIO_CRH_CNF12_1;
+		GPIOD->CRL &=~ (GPIO_CRL_MODE2 | GPIO_CRL_CNF2);  
+		GPIOD->CRL |= GPIO_CRL_CNF2_1;
+		RCC->APB1RSTR |= RCC_APB1RSTR_UART5RST;
+		RCC->APB1RSTR &=~ RCC_APB1RSTR_UART5RST;
 	}
 	else
 	{
@@ -106,6 +128,13 @@ void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound)
   UART_NVIC_Configuration(USARTx, 0, 0);
 }
 
+/**
+  * @brief  Sending buffer using USARTx. 
+  * @param  USARTx: where x can be (1..6) to select the peripheral.
+  * @param  buff: pointing to the buffer to send. 
+  * @param  count: the number of data we are going to send. 
+  * @retval None
+  */
 void Bayonet_UART_SendBuff(USART_TypeDef *USARTx, uint8_t *buff, uint16_t count)
 {
 	uint16_t i = 0;
@@ -114,5 +143,22 @@ void Bayonet_UART_SendBuff(USART_TypeDef *USARTx, uint8_t *buff, uint16_t count)
 		while(!(USARTx->SR & USART_SR_TC));
 		USARTx->DR = *buff;
 		buff++;
+	}
+}
+
+/**
+  * @brief  Sending string using USARTx. 
+  * @param  USARTx: where x can be (1..6) to select the peripheral.
+  * @param  str: pointing to the str to send.
+  * @retval None
+  */
+void Bayonet_UART_SendString(USART_TypeDef *USARTx, uint8_t *str)
+{
+	uint16_t i = 0; 
+	while(*str != '\0')
+	{
+		while(!(USARTx->SR & USART_SR_TC));
+		USARTx->DR = *str;
+		str++;
 	}
 }

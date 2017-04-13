@@ -3,7 +3,7 @@
 #include <math.h>
 
 //All GPIO port mode will be stored in here. 
-uint8_t portMode[6][16];
+uint8_t bayonetGPIOPortMode[6][16];
 
 /**
   * @brief  Translating port name to number. 
@@ -36,7 +36,7 @@ uint8_t Bayonet_GetPortIndex(GPIO_TypeDef *GPIOx)
   */
 void Bayonet_AssertInputPort(GPIO_TypeDef *GPIOx, uint8_t Pinx)
 {
-	uint8_t mode = portMode[Bayonet_GetPortIndex(GPIOx)][Pinx];
+	uint8_t mode = bayonetGPIOPortMode[Bayonet_GetPortIndex(GPIOx)][Pinx];
 	if(mode > 3)
 		AssertFailed("This IO port is not in input mode. function: Bayonet_GPIO_Get");
 }
@@ -49,7 +49,7 @@ void Bayonet_AssertInputPort(GPIO_TypeDef *GPIOx, uint8_t Pinx)
   */
 void Bayonet_AssertOutputPort(GPIO_TypeDef *GPIOx, uint8_t Pinx)
 {
-		uint8_t mode = portMode[Bayonet_GetPortIndex(GPIOx)][Pinx];
+		uint8_t mode = bayonetGPIOPortMode[Bayonet_GetPortIndex(GPIOx)][Pinx];
 		if(mode < 4)
 			AssertFailed("This IO port is not in output mode. function: Bayonet_GPIO_Set"); 
 }
@@ -113,7 +113,7 @@ void Bayonet_GPIO_Init(GPIO_TypeDef *GPIOx, uint8_t Pinx, Bayonet_GPIO_Mode Mode
 		GPIOx->CRH |=  (config << ((Pinx-8) * 4));
 	}
 	#ifdef Bayonet_Assert
-		portMode[Bayonet_GetPortIndex][Pinx] = Mode;
+		bayonetGPIOPortMode[Bayonet_GetPortIndex][Pinx] = Mode;
 	#endif
 }
 
