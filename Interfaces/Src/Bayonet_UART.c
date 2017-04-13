@@ -55,6 +55,7 @@ void UART_NVIC_Configuration(USART_TypeDef *USARTx, uint8_t PrePriority, uint8_t
 	Bayonet_NVIC_Init(channel, PrePriority, SubPriority);
 }
 
+
 void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound)
 {
 	float temp;
@@ -105,18 +106,6 @@ void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound)
   UART_NVIC_Configuration(USARTx, 0, 0);
 }
 
-void UART_Put_Char(unsigned char DataToSend)
-{
-	//U1TxBuffer[U1count++] = DataToSend;  
-  //USART_ITConfig(USART1, USART_IT_TXE, ENABLE);  
-}
-
-/*u8 UART_Get_Char(void)
-{
-	while (!(USART1->SR & USART_FLAG_RXNE));
-	return(USART_ReceiveData(USART1));
-}*/
-
 void Bayonet_UART_SendBuff(USART_TypeDef *USARTx, uint8_t *buff, uint16_t count)
 {
 	uint16_t i = 0;
@@ -126,22 +115,4 @@ void Bayonet_UART_SendBuff(USART_TypeDef *USARTx, uint8_t *buff, uint16_t count)
 		USARTx->DR = *buff;
 		buff++;
 	}
-}
-
-void USART1_IRQHandler(void)
-{
-	if(USART1->SR & USART_SR_TXE)
-	{
-		USART1->SR &=~ USART_SR_TXE;
-	}
-	else if(USART1->SR & USART_SR_RXNE)
-	{
-		USART1->SR &=~ USART_SR_RXNE;
-	}
-}
-
-
-void DEBUG_PRINTLN(unsigned char *Str)
-{
-	  //UART_Put_String(Str);  //通过USART1 发送调试信息
 }
