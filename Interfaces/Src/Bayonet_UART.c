@@ -5,11 +5,8 @@
 #include "Bayonet_LED.h"
 #include "Bayonet_Delay.h"
 
-//////////////////////////////////////////////////////////////////
-//加入以下代码,支持printf函数,而不需要选择use MicroLIB	  
 #if 1
-#pragma import(__use_no_semihosting)             
-//标准库需要的支持函数                 
+#pragma import(__use_no_semihosting)
 struct __FILE 
 {
 	int handle; 
@@ -18,17 +15,17 @@ struct __FILE
 	/* is required. */ 
 }; 
 /* FILE is typedef’ d in stdio.h. */ 
-FILE __stdout;       
-//定义_sys_exit()以避免使用半主机模式    
+FILE __stdout;
+
 void _sys_exit(int x) 
 { 
 	x = x; 
-} 
-//重定义fputc函数 
+}
+
 int fputc(int ch, FILE *f)
-{      
-	while((USART1->SR&0X40)==0);//循环发送,直到发送完毕   
-	USART1->DR = (u8) ch;      
+{
+	while((USART2->SR&0X40)==0);
+	USART2->DR = (u8) ch;      
 	return ch;
 }
 #endif 
@@ -62,12 +59,12 @@ void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound)
 {
 	float temp;
 	u16 mantissa;
-	u16 fraction;	   
-	temp=(float)(pclk2*1000000)/(bound*16);//得到USARTDIV
-	mantissa=temp;				 //得到整数部分
-	fraction=(temp-mantissa)*16; //得到小数部分	 
-  mantissa<<=4;
-	mantissa+=fraction; 
+	u16 fraction;
+	temp = (float)(pclk2*1000000.0)/(bound*16.0);
+	mantissa = temp;
+	fraction = (temp-mantissa)*16;
+  mantissa <<= 4;
+	mantissa += fraction; 
 	
 	if(USARTx == USART1)
 	{
@@ -120,21 +117,6 @@ void UART_Put_Char(unsigned char DataToSend)
 	return(USART_ReceiveData(USART1));
 }*/
 
-void UART_Put_String(unsigned char *Str)
-{
-	//判断Str指向的数据是否有效.
-	while(*Str){
-	//是否是回车字符 如果是,则发送相应的回车 0x0d 0x0a
-	if(*Str=='\r')UART_Put_Char(0x0d);
-		else if(*Str=='\n')UART_Put_Char(0x0a);
-			else UART_Put_Char(*Str);
-	//等待发送完成.
-  	//while (!(USART1->SR & USART_FLAG_TXE));
-	//指针++ 指向下一个字节.
-	Str++;
-	}
-}
-
 void Bayonet_UART_SendBuff(USART_TypeDef *USARTx, uint8_t *buff, uint16_t count)
 {
 	uint16_t i = 0;
@@ -160,6 +142,6 @@ void USART1_IRQHandler(void)
 
 
 void DEBUG_PRINTLN(unsigned char *Str)
-  {
-	  UART_Put_String(Str);  //通过USART1 发送调试信息
-	}
+{
+	  //UART_Put_String(Str);  //通过USART1 发送调试信息
+}

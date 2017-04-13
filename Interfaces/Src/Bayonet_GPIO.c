@@ -8,14 +8,16 @@ void Bayonet_GPIO_Init(GPIO_TypeDef *GPIOx, uint8_t Pinx, uint8_t IO)
 	
 	if(GPIOx == GPIOA)
 		RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
-	if(GPIOx == GPIOB)
+	else if(GPIOx == GPIOB)
 		RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
-	if(GPIOx == GPIOC)
+	else if(GPIOx == GPIOC)
 		RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
-	if(GPIOx == GPIOD)
+	else if(GPIOx == GPIOD)
 		RCC->APB2ENR |= RCC_APB2ENR_IOPDEN;
-	if(GPIOx == GPIOE)
+	else if(GPIOx == GPIOE)
 		RCC->APB2ENR |= RCC_APB2ENR_IOPEEN;
+	else
+		AssertFailed("Port not exist. Bayonet_GPIO_Init. ");
 	
 	if(IO == Bayonet_GPIO_MODE_GPIA)
 		config = 0x00;
@@ -40,7 +42,7 @@ void Bayonet_GPIO_Init(GPIO_TypeDef *GPIOx, uint8_t Pinx, uint8_t IO)
 	else if(IO == Bayonet_GPIO_MODE_GPOAOD)
 		config = 0x0F;
 	else
-		AssertFailed("a");
+		AssertFailed("Mode not exist. Bayonet_GPIO_Init");
 	
 	if(Pinx < 8)
 	{
