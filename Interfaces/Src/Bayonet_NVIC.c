@@ -3,12 +3,22 @@
 
 uint8_t isGrouped = 0;
 
-void Bayonet_NVIC_SetGroup(uint32_t NVIC_PriorityGroup)
+/**
+  * @brief  Configures priority group of NVIC. 
+  * @param  NVIC_PriorityGroup: such as the name. 
+  * @retval None
+  */
+void Bayonet_NVIC_SetGroup(Bayonet_NVIC_PriorityGroup NVIC_PriorityGroup)
 {
   SCB->AIRCR = AIRCR_VECTKEY_MASK | NVIC_PriorityGroup;
 	isGrouped = 1;
 }
 
+/**
+  * @brief  Mapping DMA peripheral and IRQ channel. 
+  * @param  CHx: DMA channel needed to map.
+  * @retval the IRQ channel of the DMA device. 
+  */
 uint8_t Bayonet_NVIC_GetIRQChannel_DMA(DMA_Channel_TypeDef *CHx)
 {
 	if(CHx == DMA1_Channel1)
@@ -40,6 +50,7 @@ uint8_t Bayonet_NVIC_GetIRQChannel_DMA(DMA_Channel_TypeDef *CHx)
 	return 0;
 }
 
+//This table was copied from ST standard peripheral lib, for non-commercial usage. 
 /**
 @code  
  The table below gives the allowed values of the pre-emption priority and subpriority according
@@ -65,6 +76,13 @@ uint8_t Bayonet_NVIC_GetIRQChannel_DMA(DMA_Channel_TypeDef *CHx)
 @endcode
 */
 
+/**
+  * @brief  Initializing the NVIC IRQ channel of the specific peripheral.
+  * @param  IRQChannel: the corresponding IRQ channel of the peripheral.
+  * @param  PrePriority: prepriority of the channel.
+  * @param  SubPriority: subpriority of the channel.
+  * @retval None
+  */
 void Bayonet_NVIC_Init(uint8_t IRQChannel, uint8_t PrePriority, uint8_t SubPriority)
 {
 	if(isGrouped)
@@ -87,8 +105,15 @@ void Bayonet_NVIC_Init(uint8_t IRQChannel, uint8_t PrePriority, uint8_t SubPrior
 	}
 	else
 		AssertFailed("NCIV not grouped."); //only show "N", whyyyyyyyyyyyyyyyy?
+	//May need to assert if the prepriority and subpriority is leagal. 
 }
 
+/**
+  * @brief  Setting interrput vector table, usually used in IAP. 
+  * @param  NVIC_VectTab: NVIC_VectTab address.
+  * @param  Offset: address starts at NVIC_Vectab + Offset.
+  * @retval None
+  */
 void Bayonet_NVIC_SetVectorTable(uint32_t NVIC_VectTab, uint32_t Offset)
 {
 	SCB->VTOR = NVIC_VectTab|(Offset & (u32)0x1FFFFF80);

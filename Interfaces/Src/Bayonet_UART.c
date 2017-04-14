@@ -154,7 +154,6 @@ void Bayonet_UART_SendBuff(USART_TypeDef *USARTx, uint8_t *buff, uint16_t count)
   */
 void Bayonet_UART_SendString(USART_TypeDef *USARTx, uint8_t *str)
 {
-	uint16_t i = 0; 
 	while(*str != '\0')
 	{
 		while(!(USARTx->SR & USART_SR_TC));
