@@ -1,10 +1,11 @@
 #include "Bayonet_UART.h"
 #include <stdio.h>
+#include <stdbool.h>
 #include "Bayonet_NVIC.h"
 #include "Bayonet_RCC.h"
 #include "Bayonet_Delay.h"
 
-uint8_t bayonetUsartPortMode[5] = {0};
+bool bayonetUsartIsInit[5] = {false};
 
 #if 1
 #pragma import(__use_no_semihosting)
@@ -40,6 +41,22 @@ void AssertFailed(char *str)
 	}
 }
 
+uint8_t Bayonet_UART_GetIndex(USART_TypeDef *USARTx)
+{
+	if(USARTx == USART1)
+		return 0;
+	else if(USARTx == USART2)
+		return 1;
+	else if(USARTx == USART3)
+		return 2;
+	else if(USARTx == UART4)
+		return 3;
+	else if(USARTx == UART5)
+		return 4;
+	else
+		return 255;
+}
+
 void UART_NVIC_Configuration(USART_TypeDef *USARTx, uint8_t PrePriority, uint8_t SubPriority)
 {
 	uint8_t channel;
@@ -58,8 +75,7 @@ void UART_NVIC_Configuration(USART_TypeDef *USARTx, uint8_t PrePriority, uint8_t
 	Bayonet_NVIC_Init(channel, PrePriority, SubPriority);
 }
 
-
-void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound)
+void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound, uint8_t prePriority, uint8_t subPriority)
 {
 	float temp;
 	u16 mantissa;
@@ -125,7 +141,8 @@ void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound)
 	
  	USARTx->BRR=mantissa;
 	USARTx->CR1 |= USART_CR1_UE | USART_CR1_RXNEIE | USART_CR1_TE | USART_CR1_RE;
-  UART_NVIC_Configuration(USARTx, 0, 0);
+  UART_NVIC_Configuration(USARTx, prePriority, subPriority);
+	bayonetUsartIsInit[Bayonet_UART_GetIndex(USARTx)] = true;
 }
 
 /**
@@ -137,6 +154,10 @@ void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound)
   */
 void Bayonet_UART_SendBuff(USART_TypeDef *USARTx, uint8_t *buff, uint16_t count)
 {
+#ifdef Bayonet_Assert
+	if(bayonetUsartIsInit[Bayonet_UART_GetIndex(USARTx))])
+		AssertFailed("Port not Initialized. Function Bayonet_UART_SendBuff"); 
+#endif
 	uint16_t i = 0;
 	for(i = 0; i < count; i++)
 	{
@@ -152,8 +173,12 @@ void Bayonet_UART_SendBuff(USART_TypeDef *USARTx, uint8_t *buff, uint16_t count)
   * @param  str: pointing to the str to send.
   * @retval None
   */
-void Bayonet_UART_SendString(USART_TypeDef *USARTx, uint8_t *str)
+void Bayonet_UART_SendString(USART_TypeDef *USARTx, char *str)
 {
+#ifdef Bayonet_Assert
+	if(bayonetUsartIsInit[Bayonet_UART_GetIndex(USARTx))])
+		AssertFailed("Port not Initialized. Function Bayonet_UART_SendBuff"); 
+#endif
 	while(*str != '\0')
 	{
 		while(!(USARTx->SR & USART_SR_TC));
