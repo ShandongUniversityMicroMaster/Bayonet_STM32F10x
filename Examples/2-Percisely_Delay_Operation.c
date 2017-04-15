@@ -6,7 +6,7 @@ int main(void)
 {
 	//Initialize delay module with function Bayonet_Delay_Init(), 72 is clock frequency of systick. 
 	//For stm32f10x series, this value is 72 or 36 regard as your chip reference manual or you can find it in ST's selection guide. 
-	Bayonet_Delay_Init(72);
+	Bayonet_Delay_Init();
 	//Initialize PA2 in general purpose mode. It is best if it is connected to a LED as control. 
 	Bayonet_GPIO_Init(GPIOA, 2, Bayonet_GPIO_MODE_GPOGPP);
 	while(1)
