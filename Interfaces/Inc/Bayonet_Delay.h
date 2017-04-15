@@ -6,8 +6,8 @@
 #define delay_ms Bayonet_Delay_Ms
 #define delay_us Bayonet_Delay_Us
 
-void Bayonet_Delay_Init(u8 SYSCLK);
-void Bayonet_Delay_Ms(u16 nms);
-void Bayonet_Delay_Us(u32 nus);
+void Bayonet_Delay_Init(uint8_t SYSCLK);
+void Bayonet_Delay_Ms(uint16_t nms);
+void Bayonet_Delay_Us(uint16_t nus);
 
 #endif
