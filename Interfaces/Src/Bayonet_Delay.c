@@ -1,5 +1,6 @@
 #include "Bayonet_Delay.h"
 #include "Bayonet_UART.h"
+#include "Bayonet_RCC.h"
 #include "stdbool.h"
 
 static u8  fac_us=0;
@@ -12,10 +13,12 @@ bool isInit = false;
   * @param  SYSCLK: highest clock frequency in your controller. 
   * @retval None
   */
-void Bayonet_Delay_Init(uint8_t SYSCLK)
+void Bayonet_Delay_Init(void)
 {
+	RCC_ClocksTypeDef RCC_ClocksStructure;
+	Bayonet_RCC_GetClocksFreq(&RCC_ClocksStructure);
 	SysTick->CTRL &=~ SysTick_CTRL_CLKSOURCE;	//External clock. 
-	fac_us = SYSCLK >> 3;
+	fac_us = (RCC_ClocksStructure.SYSCLK_Frequency / 1000000) >> 3;
 	fac_ms = (uint16_t)fac_us * 1000;
 	isInit = true;
 }
