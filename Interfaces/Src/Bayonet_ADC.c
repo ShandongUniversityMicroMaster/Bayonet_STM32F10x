@@ -109,9 +109,7 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 			GPIOA->CRL &=~ (GPIO_CRL_CNF1 | GPIO_CRL_MODE1);
 		}
 		else
-		{
-			AssertFailed("...");
-		}
+			AssertFailed("...", __FILE__, __LINE__);
 	}
 	if(ADC_CHx == Bayonet_ADC_CH10)	//PC0
 	{
@@ -141,7 +139,7 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 			GPIOA->CRL &=~ (GPIO_CRL_CNF4 | GPIO_CRL_MODE4);
 		}
 		else
-			AssertFailed("Channel not exist...");
+			AssertFailed("Channel not exist...", __FILE__, __LINE__);
 	}
 	if(ADC_CHx == Bayonet_ADC_CH15)	//PC5
 	{
@@ -151,7 +149,7 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 			GPIOA->CRL &=~ (GPIO_CRL_CNF5 | GPIO_CRL_MODE5);
 		}
 		else
-			AssertFailed("Channel not exist...");
+			AssertFailed("Channel not exist...", __FILE__, __LINE__);
 	}
 	
 	if(ADCx == ADC1)
@@ -177,7 +175,7 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 	}
 	else
 	{
-		AssertFailed("ADC Device not exist.");
+		AssertFailed("ADC Device not exist.", __FILE__, __LINE__);
 	}
 	
 	RCC->CFGR &=~ RCC_CFGR_ADCPRE_DIV8;		
@@ -261,19 +259,13 @@ void Bayonet_ADC_IM_Init(ADC_TypeDef *ADCx, uint8_t SequenceLength, uint32_t ADC
 	uint8_t i;
 	
 	if(ADCx == ADC1)
-	{
 		Bayonet_DMA_P2M_Init(DMA1, DMA1_Channel1, (uint32_t)&ADC1->DR, (uint32_t)ADC_Buff[0], Bayonet_DMA_DataWidth_32bit, SequenceLength);
-	}
 	else if(ADCx == ADC2)
-	{
-		AssertFailed("Peripheral ADC2 can not apply an independent DMA channel, which must be co-initialized with ADC1.");
-	}
+		AssertFailed("Peripheral ADC2 can not apply an independent DMA channel, which must be co-initialized with ADC1.", __FILE__, __LINE__);
 	else if(ADCx == ADC3)
-	{
 		Bayonet_DMA_P2M_Init(DMA2, DMA2_Channel5, (uint32_t)&ADC3->DR, (uint32_t)ADC_Buff[2], Bayonet_DMA_DataWidth_32bit, SequenceLength);
-	}
 	else
-		AssertFailed("ADC channel not exist.");
+		AssertFailed("ADC channel not exist.", __FILE__, __LINE__);
 	
 	for(i = 0;i < SequenceLength; i++)
 	{
@@ -312,24 +304,24 @@ u16 Bayonet_ADC_OneTime(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 {
 #ifdef BAYONET_ADC_ASSERT
 	if(ADC_CHx > Bayonet_ADC_CH15)
-		AssertFailed("ADC Channel not exist...");
+		AssertFailed("ADC Channel not exist...", __FILE__, __LINE__);
 	if(ADCx == ADC1)
 	{
 		if(!isInit[ADC_CHx][0])
-			AssertFailed("ADC Channel not initialized...");
+			AssertFailed("ADC Channel not initialized...", __FILE__, __LINE__);
 	}
 	else if(ADCx == ADC2)
 	{
 		if(!isInit[ADC_CHx][1])
-			AssertFailed("ADC Channel not initialized...");
+			AssertFailed("ADC Channel not initialized...", __FILE__, __LINE__);
 	}
 	else if(ADCx == ADC3)
 	{
 		if(!isInit[ADC_CHx][2])
-			AssertFailed("ADC Channel not initialized...");
+			AssertFailed("ADC Channel not initialized...", __FILE__, __LINE__);
 	}
 	else
-		AssertFailed("ADC Channel not exist...");
+		AssertFailed("ADC Channel not exist...", __FILE__, __LINE__);
 #endif
 	
 	Bayonet_ADC_SetRegularSequence(ADCx, 1, &ADC_CHx);

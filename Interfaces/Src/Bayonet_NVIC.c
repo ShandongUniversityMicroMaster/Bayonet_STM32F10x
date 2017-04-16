@@ -46,7 +46,7 @@ uint8_t Bayonet_NVIC_GetIRQChannel_DMA(DMA_Channel_TypeDef *CHx)
 	else if(CHx == DMA2_Channel5)
 		return DMA2_Channel4_5_IRQn;
 	else
-		AssertFailed("DMA channel not exist.");
+		AssertFailed("DMA channel not exist.", __FILE__, __LINE__);
 	return 0;
 }
 
@@ -104,7 +104,7 @@ void Bayonet_NVIC_Init(uint8_t IRQChannel, uint8_t PrePriority, uint8_t SubPrior
 			(uint32_t)0x01 << (IRQChannel & (uint8_t)0x1F);
 	}
 	else
-		AssertFailed("NCIV not grouped."); //only show "N", whyyyyyyyyyyyyyyyy?
+		AssertFailed("NCIV not grouped.", __FILE__, __LINE__); //only show "N", whyyyyyyyyyyyyyyyy?
 	//May need to assert if the prepriority and subpriority is leagal. 
 }
 

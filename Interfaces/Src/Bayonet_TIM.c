@@ -67,7 +67,7 @@ void Bayonet_TIM_Active(TIM_TypeDef *TIMx, uint8_t Mode, uint32_t CHx)
 		channel = TIM8_UP_IRQn;
 	}
 	else
-		AssertFailed("TIM not exist.");
+		AssertFailed("TIM not exist.", __FILE__, __LINE__);
 }
 
 //TIM2-7

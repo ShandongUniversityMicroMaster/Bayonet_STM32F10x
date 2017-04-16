@@ -215,5 +215,5 @@ void Bayonet_RCC_Active(Bayonet_RCC device)
 		else if(Bayonet_RCC_DAC)
 			RCC->APB1ENR |= RCC_APB1ENR_DACEN;
 		else
-			AssertFailed("Device not exit. Bayonet_RCC_Active");
+			AssertFailed("Device not exit. ", __FILE__, __LINE__);
 }

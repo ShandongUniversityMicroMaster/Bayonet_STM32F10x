@@ -26,18 +26,20 @@ void _sys_exit(int x)
 
 int fputc(int ch, FILE *f)
 {
-	while((USART2->SR&0X40)==0);
-	USART2->DR = (u8) ch;      
+	while((USART2->SR & USART_SR_TC) == 0);
+	USART2->DR = (uint8_t) ch;
 	return ch;
 }
 #endif 
 
-void AssertFailed(char *str)
+void AssertFailed(char *str, char *file, int line)
 {
+	char strBuffer[200] = {0};
 	while(1)
 	{
 		Bayonet_Delay_Ms(100);
-		printf("Assert Failed!:%s\r\n", str);
+		sprintf(strBuffer, "%s, file: %s, line: %d", str, file, line); 
+		//printf("Assert Failed!:%s\r\n", str);
 	}
 }
 
@@ -136,7 +138,7 @@ void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound, uint8_t prePr
 	}
 	else
 	{
-		AssertFailed("USART port not exist.\r\n");
+		AssertFailed("USART port not exist.\r\n", __FILE__, __LINE__);
 	}
 	
  	USARTx->BRR=mantissa;
@@ -154,11 +156,11 @@ void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound, uint8_t prePr
   */
 void Bayonet_UART_SendBuff(USART_TypeDef *USARTx, uint8_t *buff, uint16_t count)
 {
-#ifdef Bayonet_Assert
-	if(bayonetUsartIsInit[Bayonet_UART_GetIndex(USARTx))])
-		AssertFailed("Port not Initialized. Function Bayonet_UART_SendBuff"); 
-#endif
 	uint16_t i = 0;
+#ifdef Bayonet_Assert
+	if(!bayonetUsartIsInit[Bayonet_UART_GetIndex(USARTx)])
+		AssertFailed("Port not Initialized. ", __FILE__, __LINE__); 
+#endif
 	for(i = 0; i < count; i++)
 	{
 		while(!(USARTx->SR & USART_SR_TC));
@@ -176,8 +178,8 @@ void Bayonet_UART_SendBuff(USART_TypeDef *USARTx, uint8_t *buff, uint16_t count)
 void Bayonet_UART_SendString(USART_TypeDef *USARTx, char *str)
 {
 #ifdef Bayonet_Assert
-	if(bayonetUsartIsInit[Bayonet_UART_GetIndex(USARTx))])
-		AssertFailed("Port not Initialized. Function Bayonet_UART_SendBuff"); 
+	if(!bayonetUsartIsInit[Bayonet_UART_GetIndex(USARTx)])
+		AssertFailed("Port not Initialized. ", __FILE__, __LINE__); 
 #endif
 	while(*str != '\0')
 	{

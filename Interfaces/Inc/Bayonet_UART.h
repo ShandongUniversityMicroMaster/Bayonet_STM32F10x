@@ -13,6 +13,6 @@ void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound, uint8_t prePr
 void Bayonet_UART_SendBuff(USART_TypeDef *USARTx, uint8_t *buff, uint16_t count);
 void UART_Put_Char(unsigned char DataToSend);
 uint8_t UART_Get_Char(void);
-void AssertFailed(char *str);
+void AssertFailed(char *str, char *file, int line);
 void Bayonet_UART_SendString(USART_TypeDef *USARTx, char *str);
 #endif

@@ -1,7 +1,7 @@
 #include "Bayonet_Delay.h"
 #include "Bayonet_UART.h"
 #include "Bayonet_RCC.h"
-#include "stdbool.h"
+#include <stdbool.h>
 
 static u8  fac_us=0;
 static u16 fac_ms=0;
@@ -30,12 +30,12 @@ void Bayonet_Delay_Init(void)
   */
 void Bayonet_Delay_Ms(uint16_t nms)
 {
-#ifdef Bayonet_Assert
-	if(isInit == false)
-		AssertFailed("Delay module not initialized. Function Bayonet_Delay_Us"); 
-#endif
 	uint32_t load = 0;
 	uint32_t temp;
+#ifdef Bayonet_Assert
+	if(isInit == false)
+		AssertFailed("Delay module not initialized. Function Bayonet_Delay_Us", __FILE__, __LINE__); 
+#endif
 	while(nms)
 	{
 		if(nms > 1864)
@@ -71,7 +71,7 @@ void Bayonet_Delay_Us(uint16_t nus)
 	uint32_t load = 0, temp = 0;
 #ifdef Bayonet_Assert
 	if(isInit == false)
-		AssertFailed("Delay module not initialized. Function Bayonet_Delay_Us()"); 
+		AssertFailed("Delay module not initialized. Function Bayonet_Delay_Us()", __FILE__, __LINE__); 
 #endif
 	while(nus)
 	{

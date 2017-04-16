@@ -57,7 +57,7 @@ void Bayonet_DMA_SetDataWidth(DMA_Channel_TypeDef *CHx, uint8_t PeripheralDataWi
 	else if(PeripheralDataWidth == Bayonet_DMA_DataWidth_32bit)
 		CHx->CCR |= DMA_CCR1_PSIZE_1;
 	else
-		AssertFailed("DMA peripheral data width error.");
+		AssertFailed("DMA peripheral data width error.", __FILE__, __LINE__);
 	
 	if(MemoryDataWidth == Bayonet_DMA_DataWidth_8bit)
 		CHx->CCR &=~ DMA_CCR1_MSIZE;
@@ -66,7 +66,7 @@ void Bayonet_DMA_SetDataWidth(DMA_Channel_TypeDef *CHx, uint8_t PeripheralDataWi
 	else if(MemoryDataWidth == Bayonet_DMA_DataWidth_32bit)
 		CHx->CCR |= DMA_CCR1_MSIZE_1;
 	else
-		AssertFailed("DMA memory data width error.");
+		AssertFailed("DMA memory data width error.", __FILE__, __LINE__);
 }
 
 /**

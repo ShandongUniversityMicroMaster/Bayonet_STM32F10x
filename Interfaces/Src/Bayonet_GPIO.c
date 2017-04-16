@@ -23,7 +23,7 @@ uint8_t Bayonet_GetPortIndex(GPIO_TypeDef *GPIOx)
 	else if(GPIOx == GPIOE)
 		return 4;
 	else
-		AssertFailed("Port not exist. Bayonet_GetPortIndex. ");
+		AssertFailed("Port not exist. File:%s, Line:%d ", __FILE__, __LINE__);
 	
 	return 255;
 }
@@ -38,7 +38,7 @@ void Bayonet_AssertInputPort(GPIO_TypeDef *GPIOx, uint8_t Pinx)
 {
 	uint8_t mode = bayonetGPIOPortMode[Bayonet_GetPortIndex(GPIOx)][Pinx];
 	if(mode > 3)
-		AssertFailed("This IO port is not in input mode. function: Bayonet_GPIO_Get");
+		AssertFailed("This IO port is not in input mode. ", __FILE__, __LINE__);
 }
 
 /**
@@ -51,7 +51,7 @@ void Bayonet_AssertOutputPort(GPIO_TypeDef *GPIOx, uint8_t Pinx)
 {
 		uint8_t mode = bayonetGPIOPortMode[Bayonet_GetPortIndex(GPIOx)][Pinx];
 		if(mode < 4)
-			AssertFailed("This IO port is not in output mode. function: Bayonet_GPIO_Set"); 
+			AssertFailed("This IO port is not in output mode. ", __FILE__, __LINE__); 
 }
 
 /**
@@ -75,7 +75,7 @@ void Bayonet_GPIO_Init(GPIO_TypeDef *GPIOx, uint8_t Pinx, Bayonet_GPIO_Mode Mode
 	else if(GPIOx == GPIOE)
 		RCC->APB2ENR |= RCC_APB2ENR_IOPEEN;
 	else
-		AssertFailed("Port not exist. Bayonet_GPIO_Init. ");
+		AssertFailed("Port not exist. ", __FILE__, __LINE__);
 	
 	if(Mode == Bayonet_GPIO_MODE_GPIA)
 		config = 0x00;
@@ -100,7 +100,7 @@ void Bayonet_GPIO_Init(GPIO_TypeDef *GPIOx, uint8_t Pinx, Bayonet_GPIO_Mode Mode
 	else if(Mode == Bayonet_GPIO_MODE_GPOAOD)
 		config = 0x0F;
 	else
-		AssertFailed("Mode not exist. Bayonet_GPIO_Init");
+		AssertFailed("Mode not exist. ", __FILE__, __LINE__);
 	
 	if(Pinx < 8)
 	{
@@ -113,7 +113,7 @@ void Bayonet_GPIO_Init(GPIO_TypeDef *GPIOx, uint8_t Pinx, Bayonet_GPIO_Mode Mode
 		GPIOx->CRH |=  (config << ((Pinx-8) * 4));
 	}
 	#ifdef Bayonet_Assert
-		bayonetGPIOPortMode[Bayonet_GetPortIndex][Pinx] = Mode;
+		bayonetGPIOPortMode[Bayonet_GetPortIndex(GPIOx)][Pinx] = Mode;
 	#endif
 }
 
@@ -125,9 +125,9 @@ void Bayonet_GPIO_Init(GPIO_TypeDef *GPIOx, uint8_t Pinx, Bayonet_GPIO_Mode Mode
   */
 uint8_t Bayonet_GPIO_Get(GPIO_TypeDef *GPIOx, uint8_t Pinx)
 {
-	#ifdef Bayonet_Assert
-		Bayonet_AssertInputPort(GPIOx, Pinx);
-	#endif
+#ifdef Bayonet_Assert
+	Bayonet_AssertInputPort(GPIOx, Pinx);
+#endif
 	return (GPIOx->IDR & (0x1 << Pinx));
 }
 
