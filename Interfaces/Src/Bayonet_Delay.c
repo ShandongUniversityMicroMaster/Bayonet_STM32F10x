@@ -6,7 +6,7 @@
 static u8  fac_us=0;
 static u16 fac_ms=0;
 
-bool isInit = false;
+bool delayIsInit = false;
 
 /**
   * @brief  Initializing systick for percise delay. 
@@ -20,7 +20,7 @@ void Bayonet_Delay_Init(void)
 	SysTick->CTRL &=~ SysTick_CTRL_CLKSOURCE;	//External clock. 
 	fac_us = (RCC_ClocksStructure.SYSCLK_Frequency / 1000000) >> 3;
 	fac_ms = (uint16_t)fac_us * 1000;
-	isInit = true;
+	delayIsInit = true;
 }
 
 /**
@@ -33,7 +33,7 @@ void Bayonet_Delay_Ms(uint16_t nms)
 	uint32_t load = 0;
 	uint32_t temp;
 #ifdef Bayonet_Assert
-	if(isInit == false)
+	if(delayIsInit == false)
 		AssertFailed("Delay module not initialized. Function Bayonet_Delay_Us", __FILE__, __LINE__); 
 #endif
 	while(nms)
@@ -70,7 +70,7 @@ void Bayonet_Delay_Us(uint16_t nus)
 {
 	uint32_t load = 0, temp = 0;
 #ifdef Bayonet_Assert
-	if(isInit == false)
+	if(delayIsInit == false)
 		AssertFailed("Delay module not initialized. Function Bayonet_Delay_Us()", __FILE__, __LINE__); 
 #endif
 	while(nus)

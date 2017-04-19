@@ -2,7 +2,7 @@
 #include "Bayonet_UART.h"
 #include "Bayonet_DMA.h"
 
-uint8_t isInit[16][3] = {0};
+uint8_t adcIsInit[16][3] = {0};
 uint32_t tableSequence[3][16] = {0};
 uint32_t tableMode[3] = {0};
 
@@ -157,21 +157,21 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 		RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
 		RCC->APB2RSTR |= RCC_APB2RSTR_ADC1RST;
 		RCC->APB2RSTR &=~ RCC_APB2RSTR_ADC1RST;
-		isInit[ADC_CHx][0] = 1;
+		adcIsInit[ADC_CHx][0] = 1;
 	}
 	else if(ADCx == ADC2)
 	{
 		RCC->APB2ENR |= RCC_APB2ENR_ADC2EN;
 		RCC->APB2RSTR |= RCC_APB2RSTR_ADC2RST;
 		RCC->APB2RSTR &=~ RCC_APB2RSTR_ADC2RST;
-		isInit[ADC_CHx][1] = 1;
+		adcIsInit[ADC_CHx][1] = 1;
 	}
 	else if(ADCx == ADC3)
 	{
 		RCC->APB2ENR |= RCC_APB2ENR_ADC3EN;
 		RCC->APB2RSTR |= RCC_APB2RSTR_ADC3RST;
 		RCC->APB2RSTR &=~ RCC_APB2RSTR_ADC3RST;
-		isInit[ADC_CHx][2] = 1;
+		adcIsInit[ADC_CHx][2] = 1;
 	}
 	else
 	{
@@ -307,17 +307,17 @@ u16 Bayonet_ADC_OneTime(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 		AssertFailed("ADC Channel not exist...", __FILE__, __LINE__);
 	if(ADCx == ADC1)
 	{
-		if(!isInit[ADC_CHx][0])
+		if(!adcIsInit[ADC_CHx][0])
 			AssertFailed("ADC Channel not initialized...", __FILE__, __LINE__);
 	}
 	else if(ADCx == ADC2)
 	{
-		if(!isInit[ADC_CHx][1])
+		if(!adcIsInit[ADC_CHx][1])
 			AssertFailed("ADC Channel not initialized...", __FILE__, __LINE__);
 	}
 	else if(ADCx == ADC3)
 	{
-		if(!isInit[ADC_CHx][2])
+		if(!adcIsInit[ADC_CHx][2])
 			AssertFailed("ADC Channel not initialized...", __FILE__, __LINE__);
 	}
 	else

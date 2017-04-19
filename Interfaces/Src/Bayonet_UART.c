@@ -7,7 +7,6 @@
 
 bool bayonetUsartIsInit[5] = {false};
 
-#if 1
 #pragma import(__use_no_semihosting)
 struct __FILE 
 {
@@ -26,11 +25,10 @@ void _sys_exit(int x)
 
 int fputc(int ch, FILE *f)
 {
-	while((USART2->SR & USART_SR_TC) == 0);
+	while(!(USART2->SR & USART_SR_TC));
 	USART2->DR = (uint8_t) ch;
 	return ch;
 }
-#endif 
 
 void AssertFailed(char *str, char *file, int line)
 {

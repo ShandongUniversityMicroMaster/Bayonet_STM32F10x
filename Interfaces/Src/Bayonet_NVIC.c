@@ -104,7 +104,7 @@ void Bayonet_NVIC_Init(uint8_t IRQChannel, uint8_t PrePriority, uint8_t SubPrior
 			(uint32_t)0x01 << (IRQChannel & (uint8_t)0x1F);
 	}
 	else
-		AssertFailed("NCIV not grouped.", __FILE__, __LINE__); //only show "N", whyyyyyyyyyyyyyyyy?
+		AssertFailed("NVIC not grouped.", __FILE__, __LINE__); //only show "N", whyyyyyyyyyyyyyyyy?
 	//May need to assert if the prepriority and subpriority is leagal. 
 }
 
