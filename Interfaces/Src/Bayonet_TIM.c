@@ -46,7 +46,7 @@ void Bayonet_TIM_Active(TIM_TypeDef *TIMx, uint8_t Mode, uint32_t CHx)
 		Bayonet_RCC_Active(Bayonet_RCC_TIM4);
 		channel = TIM4_IRQn;
 	}
-	else if(TIMx == TIM5)
+	/*else if(TIMx == TIM5)
 	{
 		Bayonet_RCC_Active(Bayonet_RCC_TIM5);
 		channel = TIM5_IRQn;
@@ -65,7 +65,7 @@ void Bayonet_TIM_Active(TIM_TypeDef *TIMx, uint8_t Mode, uint32_t CHx)
 	{
 		Bayonet_RCC_Active(Bayonet_RCC_TIM8);
 		channel = TIM8_UP_IRQn;
-	}
+	}*/
 	else
 		AssertFailed("TIM not exist.", __FILE__, __LINE__);
 }

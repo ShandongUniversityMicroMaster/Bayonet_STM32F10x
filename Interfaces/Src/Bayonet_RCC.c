@@ -168,8 +168,8 @@ void Bayonet_RCC_Active(Bayonet_RCC device)
 			RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
 		else if(device == Bayonet_RCC_DMA1)
 			RCC->AHBENR |= RCC_AHBENR_DMA1EN;
-		else if(device == Bayonet_RCC_DMA2)
-			RCC->AHBENR |= RCC_AHBENR_DMA2EN;
+		/*else if(device == Bayonet_RCC_DMA2)
+			RCC->AHBENR |= RCC_AHBENR_DMA2EN;*/
 		else if(device == Bayonet_RCC_SRAM)
 			RCC->AHBENR |= RCC_AHBENR_SRAMEN;
 		else if(device == Bayonet_RCC_FLITF)
@@ -182,26 +182,26 @@ void Bayonet_RCC_Active(Bayonet_RCC device)
 			RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
 		else if(device == Bayonet_RCC_TIM4)
 			RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
-		else if(device == Bayonet_RCC_TIM5)
+		/*else if(device == Bayonet_RCC_TIM5)
 			RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
 		else if(device == Bayonet_RCC_TIM6)
 			RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
 		else if(device == Bayonet_RCC_TIM7)
-			RCC->APB1ENR |= RCC_APB1ENR_TIM7EN;
+			RCC->APB1ENR |= RCC_APB1ENR_TIM7EN;*/
 		else if(device == Bayonet_RCC_WWDG)
 			RCC->APB1ENR |= RCC_APB1ENR_WWDGEN;
 		else if(device == Bayonet_RCC_SPI2)
 			RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
-		else if(device == Bayonet_RCC_SPI3)
-			RCC->APB1ENR |= RCC_APB1ENR_SPI3EN;
+		/*else if(device == Bayonet_RCC_SPI3)
+			RCC->APB1ENR |= RCC_APB1ENR_SPI3EN;*/
 		else if(device == Bayonet_RCC_UART2)
 			RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
 		else if(device == Bayonet_RCC_UART3)
 			RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
-		else if(device == Bayonet_RCC_UART4)
+		/*else if(device == Bayonet_RCC_UART4)
 			RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
 		else if(device == Bayonet_RCC_UART5)
-			RCC->APB1ENR |= RCC_APB1ENR_UART5EN;
+			RCC->APB1ENR |= RCC_APB1ENR_UART5EN;*/
 		else if(device == Bayonet_RCC_I2C1)
 			RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
 		else if(device == Bayonet_RCC_I2C2)
@@ -212,8 +212,8 @@ void Bayonet_RCC_Active(Bayonet_RCC device)
 			RCC->APB1ENR |= RCC_APB1ENR_BKPEN;
 		else if(device == Bayonet_RCC_PWR)
 			RCC->APB1ENR |= RCC_APB1ENR_PWREN;
-		else if(device == Bayonet_RCC_DAC)
-			RCC->APB1ENR |= RCC_APB1ENR_DACEN;
+		/*else if(device == Bayonet_RCC_DAC)
+			RCC->APB1ENR |= RCC_APB1ENR_DACEN;*/
 		else
 			AssertFailed("Device not exit. ", __FILE__, __LINE__);
 }
