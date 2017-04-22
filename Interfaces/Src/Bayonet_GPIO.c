@@ -123,12 +123,15 @@ void Bayonet_GPIO_Init(GPIO_TypeDef *GPIOx, uint8_t Pinx, Bayonet_GPIO_Mode Mode
   * @param  Pinx: where x can be (0..15) to select the port channel. 
   * @retval 0 or 1, representing the voltage level of the port. 
   */
-uint8_t Bayonet_GPIO_Get(GPIO_TypeDef *GPIOx, uint8_t Pinx)
+bool Bayonet_GPIO_Get(GPIO_TypeDef *GPIOx, uint8_t Pinx)
 {
 #ifdef Bayonet_Assert
 	Bayonet_AssertInputPort(GPIOx, Pinx);
 #endif
-	return (GPIOx->IDR & (0x1 << Pinx));
+	if((GPIOx->IDR & (1 << Pinx)) != 0)
+		return true;
+	else
+		return false;
 }
 
 /**
@@ -138,7 +141,7 @@ uint8_t Bayonet_GPIO_Get(GPIO_TypeDef *GPIOx, uint8_t Pinx)
   * @param  state: state to set. 
   * @retval None. 
   */
-void Bayonet_GPIO_Set(GPIO_TypeDef *GPIOx, uint8_t Pinx, uint8_t state)
+void Bayonet_GPIO_Set(GPIO_TypeDef *GPIOx, uint8_t Pinx, bool state)
 {
 	#ifdef Bayonet_Assert
 		Bayonet_AssertOutputPort(GPIOx, Pinx);

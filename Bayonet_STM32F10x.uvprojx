@@ -434,6 +434,11 @@
               <FileType>1</FileType>
               <FilePath>.\Interfaces\Src\Bayonet_CAN.c</FilePath>
             </File>
+            <File>
+              <FileName>Bayonet_IIC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Interfaces\Src\Bayonet_IIC.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

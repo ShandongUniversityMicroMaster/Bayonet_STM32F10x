@@ -7,7 +7,7 @@
 
 bool bayonetUsartIsInit[5] = {false};
 
-#pragma import(__use_no_semihosting)
+//#pragma import(__use_no_semihosting)
 struct __FILE 
 {
 	int handle; 

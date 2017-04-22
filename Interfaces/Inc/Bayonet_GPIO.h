@@ -2,6 +2,7 @@
 #define __BAYONET_GPIO_H
 
 #include "stm32f10x.h"
+#include <stdbool.h>
 
 typedef enum{
 	Bayonet_GPIO_MODE_GPIA,
@@ -15,8 +16,8 @@ typedef enum{
 }Bayonet_GPIO_Mode;
 
 void Bayonet_GPIO_Init(GPIO_TypeDef *GPIOx, uint8_t Pinx, Bayonet_GPIO_Mode Mode);
-uint8_t Bayonet_GPIO_Get(GPIO_TypeDef *GPIOx, uint8_t Pinx);
-void Bayonet_GPIO_Set(GPIO_TypeDef *GPIOx, uint8_t Pinx, uint8_t state);
+bool Bayonet_GPIO_Get(GPIO_TypeDef *GPIOx, uint8_t Pinx);
+void Bayonet_GPIO_Set(GPIO_TypeDef *GPIOx, uint8_t Pinx, bool state);
 void Bayonet_GPIO_Turn(GPIO_TypeDef *GPIOx, uint8_t Pinx);
 
 #endif

@@ -2,7 +2,9 @@
 #include "Bayonet_RCC.h"
 #include "Bayonet_GPIO.h"
 #include "Bayonet_NVIC.h"
+#include "Bayonet_UART.h"
 
+extern uint8_t ID;
 
 void Bayonet_CAN_CLOCK_IO_Init(CAN_TypeDef *CANx)
 {
@@ -37,7 +39,8 @@ Bayonet_CAN_STATE Bayonet_CAN_Init(CAN_TypeDef *CANx)
 	CANx->MCR &=~ CAN_MCR_TXFP;			//No priority. 
 	CANx->BTR = 0x00000000;
 	
-	//CANx->BTR |= CAN_BTR_LBKM;
+	CANx->BTR &=~ CAN_BTR_LBKM;
+	CANx->BTR &=~ CAN_BTR_SILM;
 	CANx->BTR |= 1 << 24;
 	CANx->BTR |= 7 << 20;
 	CANx->BTR |= 8 << 16; 
@@ -54,8 +57,8 @@ Bayonet_CAN_STATE Bayonet_CAN_Init(CAN_TypeDef *CANx)
 	CANx->FS1R |= CAN_FS1R_FSC0;
 	CANx->FM1R &=~ CAN_FM1R_FBM;
 	CANx->FFA1R &=~ CAN_FFA1R_FFA;
-	CANx->sFilterRegister[0].FR1 = 0x00000000;
-	CANx->sFilterRegister[1].FR2 = 0xFFE000A0;
+	CANx->sFilterRegister[0].FR1 = ID<<21;
+	CANx->sFilterRegister[0].FR2 = 0xFFE00000;
 	CANx->FA1R |= CAN_FA1R_FACT0;
 	CANx->FMR &=~ CAN_FMR_FINIT;
 	
@@ -99,8 +102,4 @@ Bayonet_CAN_STATE Bayonet_CAN_SendMessage(CAN_TypeDef *CANx, uint32_t id, uint8_
 	CANx->sTxMailBox[mailBox].TIR |= CAN_TI0R_TXRQ;
 	
 	return Bayonet_CAN_Succeed;
-}
-
-void USB_LP_CAN1_RX0_IRQHandler()
-{
 }
