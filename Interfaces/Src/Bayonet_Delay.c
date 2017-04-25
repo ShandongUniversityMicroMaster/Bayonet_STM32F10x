@@ -37,8 +37,8 @@
 #include "Bayonet_RCC.h"
 #include <stdbool.h>
 
-static u8  fac_us=0;
-static u16 fac_ms=0;
+static uint8_t  fac_us=0;
+static uint16_t fac_ms=0;
 
 bool delayIsInit = false;
 
