@@ -62,51 +62,80 @@ typedef struct
 
 typedef enum{
 	//APB2 Periph.
+#if !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_HD_VL)
+	Bayonet_RCC_ADC2,		
+#endif
+#if !defined (STM32F10X_LD) && !defined (STM32F10X_LD_VL)		
+	Bayonet_RCC_GPIOE,
+#endif
+#if defined (STM32F10X_HD) || defined (STM32F10X_XL)
+	Bayonet_RCC_GPIOF,
+	Bayonet_RCC_GPIOG,			
+	Bayonet_RCC_TIM8,			
+	Bayonet_RCC_ADC3,
+#endif
 	Bayonet_RCC_AFIO, 			
 	Bayonet_RCC_GPIOA,			
 	Bayonet_RCC_GPIOB,			
 	Bayonet_RCC_GPIOC,			
 	Bayonet_RCC_GPIOD,			
-	Bayonet_RCC_GPIOE,			
-	Bayonet_RCC_ADC1,			
-	Bayonet_RCC_ADC2,			
+	Bayonet_RCC_ADC1,		
 	Bayonet_RCC_TIM1,			
 	Bayonet_RCC_SPI1,		
 	Bayonet_RCC_UART1,			
-	Bayonet_RCC_TIM8,			
+	Bayonet_RCC_TIM9,				
+	Bayonet_RCC_TIM10,				
+	Bayonet_RCC_TIM11,	
 
 	//AHB Periph.
-	Bayonet_RCC_DMA1,			
-	Bayonet_RCC_DMA2,			
+	Bayonet_RCC_DMA1,	
+#if defined (STM32F10X_HD) || defined  (STM32F10X_CL) || defined  (STM32F10X_HD_VL) || defined  (STM32F10X_XL)	
+	Bayonet_RCC_DMA2,
+#endif
+#if defined (STM32F10X_HD) || defined (STM32F10X_XL)
+	Bayonet_RCC_FSMC,
+	Bayonet_RCC_SDIO,
+#endif
+#ifdef STM32F10X_CL	
+	Bayonet_RCC_OTGFS,
+	Bayonet_RCC_ETHMAC,		
+	Bayonet_RCC_ETHMACTX, 	
+	Bayonet_RCC_ETHMACRX, 	
+#endif
 	Bayonet_RCC_SRAM,			
 	Bayonet_RCC_FLITF,		
-	Bayonet_RCC_CRC,				
-	//Bayonet_RCC_OTGFS			
-	//Bayonet_RCC_ETHMAC		
-	//Bayonet_RCC_ETHMACTX 	
-	//Bayonet_RCC_ETHMACRX 	
+	Bayonet_RCC_CRC,		
 
 	//APB1 Periph.
-	Bayonet_RCC_TIM2,			
-	Bayonet_RCC_TIM3,			
+#if !defined (STM32F10X_LD) && !defined (STM32F10X_LD_VL)
 	Bayonet_RCC_TIM4,			
+	Bayonet_RCC_SPI2,				
+	Bayonet_RCC_UART3,	
+	Bayonet_RCC_I2C2,			
+#endif
+#if defined (STM32F10X_HD) || defined (STM32F10X_MD) || defined  (STM32F10X_LD) || defined  (STM32F10X_XL)
+	Bayonet_RCC_USB,
+#endif
+#if defined (STM32F10X_HD) || defined  (STM32F10X_CL)	
 	Bayonet_RCC_TIM5,			
 	Bayonet_RCC_TIM6,			
-	Bayonet_RCC_TIM7,			
-	Bayonet_RCC_WWDG,		
-	Bayonet_RCC_SPI2,			
-	Bayonet_RCC_SPI3,		
-	Bayonet_RCC_UART2,			
-	Bayonet_RCC_UART3,			
+	Bayonet_RCC_TIM7,		
+	Bayonet_RCC_SPI3,				
 	Bayonet_RCC_UART4,			
-	Bayonet_RCC_UART5,			
+	Bayonet_RCC_UART5,				
+	Bayonet_RCC_DAC,
+#endif
+#ifdef STM32F10X_CL
+	Bayonet_RCC_CAN2,			
+#endif
+	Bayonet_RCC_TIM2,			
+	Bayonet_RCC_TIM3,			
+	Bayonet_RCC_WWDG,			
+	Bayonet_RCC_UART2,			
 	Bayonet_RCC_I2C1,			
-	Bayonet_RCC_I2C2,			
 	Bayonet_RCC_CAN1,			
-	//Bayonet_RCC_CAN2			
 	Bayonet_RCC_BKP,				
-	Bayonet_RCC_PWR,				
-	Bayonet_RCC_DAC			
+	Bayonet_RCC_PWR
 }Bayonet_RCC;
 
 void Bayonet_RCC_Active(Bayonet_RCC device);
