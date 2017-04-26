@@ -77,11 +77,13 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 			RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
 			GPIOA->CRL &=~ (GPIO_CRL_CNF4 | GPIO_CRL_MODE4);
 		}
+#if defined (STM32F10X_HD) || defined (STM32F10X_XL)
 		else  //PF6
 		{
 			RCC->APB2ENR |= RCC_APB2ENR_IOPFEN;
 			GPIOA->CRL &=~ (GPIO_CRL_CNF6 | GPIO_CRL_MODE6);
 		}
+#endif
 	}
 	if(ADC_CHx == Bayonet_ADC_CH5)
 	{
@@ -90,11 +92,13 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 			RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
 			GPIOA->CRL &=~ (GPIO_CRL_CNF5 | GPIO_CRL_MODE5);
 		}
+#if defined (STM32F10X_HD) || defined (STM32F10X_XL)
 		else  //PF7
 		{
 			RCC->APB2ENR |= RCC_APB2ENR_IOPFEN;
 			GPIOF->CRL &=~ (GPIO_CRL_CNF7 | GPIO_CRL_MODE7);
 		}
+#endif
 	}
 	if(ADC_CHx == Bayonet_ADC_CH6)
 	{
@@ -103,11 +107,13 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 			RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
 			GPIOF->CRL &=~ (GPIO_CRL_CNF6 | GPIO_CRL_MODE6);
 		}
+#if defined (STM32F10X_HD) || defined (STM32F10X_XL)
 		else  //PF8
 		{
 			RCC->APB2ENR |= RCC_APB2ENR_IOPFEN;
 			GPIOF->CRH &=~ (GPIO_CRH_CNF8 | GPIO_CRH_MODE8);
 		}
+#endif
 	}
 	if(ADC_CHx == Bayonet_ADC_CH7)
 	{
@@ -116,11 +122,13 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 			RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
 			GPIOA->CRL &=~ (GPIO_CRL_CNF7 | GPIO_CRL_MODE7);
 		}
+#if defined (STM32F10X_HD) || defined (STM32F10X_XL)
 		else  //PF9
 		{
 			RCC->APB2ENR |= RCC_APB2ENR_IOPFEN;
 			GPIOF->CRH &=~ (GPIO_CRH_CNF9 | GPIO_CRH_MODE9);
 		}
+#endif
 	}
 	if(ADC_CHx == Bayonet_ADC_CH8)
 	{
@@ -129,11 +137,13 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 			RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
 			GPIOA->CRL &=~ (GPIO_CRL_CNF0 | GPIO_CRL_MODE0);
 		}
+#if defined (STM32F10X_HD) || defined (STM32F10X_XL)
 		else  //PF10
 		{
 			RCC->APB2ENR |= RCC_APB2ENR_IOPFEN;
 			GPIOF->CRH &=~ (GPIO_CRH_CNF10 | GPIO_CRH_MODE10);
 		}
+#endif
 	}
 	if(ADC_CHx == Bayonet_ADC_CH9)
 	{
@@ -200,6 +210,7 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 		RCC->APB2RSTR &=~ RCC_APB2RSTR_ADC2RST;
 		adcIsInit[ADC_CHx][1] = 1;
 	}
+#if defined (STM32F10X_HD) || defined (STM32F10X_XL)
 	else if(ADCx == ADC3)
 	{
 		RCC->APB2ENR |= RCC_APB2ENR_ADC3EN;
@@ -207,6 +218,7 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 		RCC->APB2RSTR &=~ RCC_APB2RSTR_ADC3RST;
 		adcIsInit[ADC_CHx][2] = 1;
 	}
+#endif
 	else
 	{
 		AssertFailed("ADC Device not exist.", __FILE__, __LINE__);

@@ -53,10 +53,12 @@ void Bayonet_DMA_CLOCK_IO_Init(DMA_TypeDef *DMAx, DMA_Channel_TypeDef *CHx, uint
 	{
 		Bayonet_RCC_Active(Bayonet_RCC_DMA1);
 	}
+#if defined (STM32F10X_HD) || defined  (STM32F10X_CL) || defined  (STM32F10X_HD_VL) || defined  (STM32F10X_XL)	
 	else
 	{
 		Bayonet_RCC_Active(Bayonet_RCC_DMA2);
 	}
+#endif
 	delay_ms(5);
 	
 	CHx->CPAR = PeripheralAdress;

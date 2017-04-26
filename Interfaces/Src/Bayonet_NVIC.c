@@ -69,16 +69,25 @@ uint8_t Bayonet_NVIC_GetIRQChannel_DMA(DMA_Channel_TypeDef *CHx)
 		return DMA1_Channel6_IRQn;
 	else if(CHx == DMA1_Channel7)
 		return DMA1_Channel7_IRQn;
+#if defined(STM32F10X_HD) || defined(STM32F10X_XL) || defined(STM32F10X_CL)
 	else if(CHx == DMA2_Channel1)
 		return DMA2_Channel1_IRQn;
 	else if(CHx == DMA2_Channel2)
 		return DMA2_Channel2_IRQn;
 	else if(CHx == DMA2_Channel3)
 		return DMA2_Channel3_IRQn;
+#endif
+#if defined(STM32F10X_HD) || defined(STM32F10X_XL)
 	else if(CHx == DMA2_Channel4)
 		return DMA2_Channel4_5_IRQn;
 	else if(CHx == DMA2_Channel5)
 		return DMA2_Channel4_5_IRQn;
+#elseif defined(STM32F10X_CL)
+	else if(CHx == DMA2_Channel4)
+		return DMA2_Channel4_IRQn;
+	else if(CHx == DMA2_Channel5)
+		return DMA2_Channel4_IRQn;
+#endif
 	else
 		AssertFailed("DMA channel not exist.", __FILE__, __LINE__);
 	return 0;
