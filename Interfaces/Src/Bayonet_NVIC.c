@@ -49,6 +49,39 @@ void Bayonet_NVIC_SetGroup(Bayonet_NVIC_PriorityGroup NVIC_PriorityGroup)
 }
 
 /**
+  * @brief  Mapping Timer peripheral and IRQ channel. 
+  * @param  TIMx: Timer needed to map.
+  * @retval the IRQ channel of the Timer device. 
+  */
+uint8_t Bayonet_NVIC_GetIRQChannel_TIM(TIM_TypeDef *TIMx, Bayonet_TIM_MODE mode)
+{
+	if(TIMx == TIM1)
+	{
+		if(mode == Bayonet_TIM_MODE_INT)
+			return TIM1_UP_IRQn;
+	}
+	else if(TIMx == TIM2)
+		return TIM2_IRQn;
+	else if(TIMx == TIM3)
+		return TIM3_IRQn;
+	else if(TIMx == TIM4)
+		return TIM4_IRQn;
+	else if(TIMx == TIM5)
+		return TIM5_IRQn;
+	else if(TIMx == TIM6)
+		return TIM6_IRQn;
+	else if(TIMx == TIM7)
+		return TIM7_IRQn;
+	else if(TIMx == TIM8)
+	{
+		if(mode == Bayonet_TIM_MODE_INT)
+			return TIM8_UP_IRQn;
+	}
+	
+	return 1;
+}
+
+/**
   * @brief  Mapping DMA peripheral and IRQ channel. 
   * @param  CHx: DMA channel needed to map.
   * @retval the IRQ channel of the DMA device. 
@@ -82,7 +115,7 @@ uint8_t Bayonet_NVIC_GetIRQChannel_DMA(DMA_Channel_TypeDef *CHx)
 		return DMA2_Channel4_5_IRQn;
 	else if(CHx == DMA2_Channel5)
 		return DMA2_Channel4_5_IRQn;
-#elseif defined(STM32F10X_CL)
+#elif defined(STM32F10X_CL)
 	else if(CHx == DMA2_Channel4)
 		return DMA2_Channel4_IRQn;
 	else if(CHx == DMA2_Channel5)
@@ -90,7 +123,24 @@ uint8_t Bayonet_NVIC_GetIRQChannel_DMA(DMA_Channel_TypeDef *CHx)
 #endif
 	else
 		AssertFailed("DMA channel not exist.", __FILE__, __LINE__);
-	return 0;
+	
+	return 1;
+}
+
+uint8_t Bayonet_NVIC_GetIRQChannel_SPI(SPI_TypeDef *SPIx)
+{
+	if(SPIx == SPI1)
+		return SPI1_IRQn;
+#if !defined (STM32F10X_LD) && !defined (STM32F10X_LD_VL)
+	else if(SPIx == SPI2)
+		return SPI2_IRQn;
+#endif
+#if defined (STM32F10X_HD) || defined  (STM32F10X_CL)
+	else if(SPIx == SPI3)
+		return SPI3_IRQn;
+#endif
+	
+	return 1;
 }
 
 //This table was copied from ST standard peripheral lib, for non-commercial usage. 

@@ -36,6 +36,7 @@
 #define __BAYONET_NVIC_H
 
 #include "stm32f10x.h"
+#include "Bayonet_TIM.h"
 #include "Bayonet_Config.h"
 
 #define AIRCR_VECTKEY_MASK    ((uint32_t)0x05FA0000)
@@ -50,7 +51,9 @@ typedef enum{
 
 void Bayonet_NVIC_SetGroup(Bayonet_NVIC_PriorityGroup NVIC_PriorityGroup);
 void Bayonet_NVIC_Init(uint8_t IRQChannel, uint8_t PrePriority, uint8_t SubPriority);
+uint8_t Bayonet_NVIC_GetIRQChannel_TIM(TIM_TypeDef *TIMx, Bayonet_TIM_MODE mode);
 uint8_t Bayonet_NVIC_GetIRQChannel_DMA(DMA_Channel_TypeDef *CHx);
+uint8_t Bayonet_NVIC_GetIRQChannel_SPI(SPI_TypeDef *SPIx);
 void Bayonet_NVIC_SetVectorTable(uint32_t NVIC_VectTab, uint32_t Offset);
 
 #endif
