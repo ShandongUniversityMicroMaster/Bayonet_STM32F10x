@@ -32,6 +32,107 @@
 	********************************************************************************
 	*/
 	
-void Bayonet_SPI_Init()
+#include "Bayonet_SPI.h"
+#include "Bayonet_RCC.h"
+#include "Bayonet_UART.h"
+#include "Bayonet_GPIO.h"
+#include "Bayonet_NVIC.h"
+
+void Bayonet_SPI_Clock_IO_Init(SPI_TypeDef *SPIx, uint8_t mode)
 {
+	Bayonet_GPIO_Mode modeIO[3];
+	if(mode == Bayonet_SPI_MODE_MASTER)
+	{
+		modeIO[0] = Bayonet_GPIO_MODE_GPOAPP;
+		modeIO[1] = Bayonet_GPIO_MODE_GPIU;
+		modeIO[2] = Bayonet_GPIO_MODE_GPOAPP;
+	}
+	else if(mode == Bayonet_SPI_MODE_SLAVE)
+	{
+		modeIO[0] = Bayonet_GPIO_MODE_GPIU;
+		modeIO[1] = Bayonet_GPIO_MODE_GPOAPP;
+		modeIO[2] = Bayonet_GPIO_MODE_GPIU;
+	}
+	else
+		AssertFailed("SPI mode not exist. ", __FILE__, __LINE__);
+	if(SPIx == SPI1)
+	{
+		Bayonet_RCC_Active(Bayonet_RCC_SPI1);
+		Bayonet_RCC_Active(Bayonet_RCC_GPIOA);
+		
+		//Bayonet_GPIO_Init(GPIOA, 4, Bayonet_GPIO_MODE_GPIU);
+		Bayonet_GPIO_Init(GPIOA, 5, modeIO[0]);				//SCK
+		Bayonet_GPIO_Init(GPIOA, 6, modeIO[1]);				//MISO
+		Bayonet_GPIO_Init(GPIOA, 7, modeIO[2]);				//MOSI
+	}
+#if !defined (STM32F10X_LD) && !defined (STM32F10X_LD_VL)
+	else if(SPIx == SPI2)
+	{
+		Bayonet_RCC_Active(Bayonet_RCC_SPI2);
+		Bayonet_RCC_Active(Bayonet_RCC_GPIOB);
+		
+		Bayonet_GPIO_Init(GPIOB, 13, modeIO[0]);			//SCK. 
+		Bayonet_GPIO_Init(GPIOB, 14, modeIO[1]);			//MISO.
+		Bayonet_GPIO_Init(GPIOB, 15, modeIO[2]);			//MOSI
+	}
+#endif
+#if defined (STM32F10X_HD) || defined  (STM32F10X_CL)
+	else if(SPIx == SPI3)
+	{
+		Bayonet_RCC_Active(Bayonet_RCC_SPI3);
+	}
+#endif
+	else
+		AssertFailed("SPI devices not found. ", __FILE__, __LINE__);
+}
+
+void Bayonet_SPI_Init_Master(SPI_TypeDef *SPIx, uint16_t speed)
+{
+	Bayonet_SPI_Clock_IO_Init(SPIx, Bayonet_SPI_MODE_MASTER);
+	
+	SPIx->CR1 |= 3 << 3;
+	SPIx->CR1 |= SPI_CR1_CPOL;
+	SPIx->CR1 |= SPI_CR1_CPHA;
+	SPIx->CR1 &=~ SPI_CR1_DFF;
+	SPIx->CR1 &=~ SPI_CR1_LSBFIRST;
+	SPIx->CR1 |= SPI_CR1_SSM;
+	SPIx->CR1 |= SPI_CR1_SSI;
+	SPIx->CR1 |= SPI_CR1_MSTR;
+	SPIx->CR1 |= SPI_CR1_SPE;
+	
+	Bayonet_SPI_ReadWriteByte(SPIx, 0xff);
+}
+
+void Bayonet_SPI_Init_Slave(SPI_TypeDef *SPIx, uint8_t prePriority, uint8_t subPriority)
+{
+	Bayonet_SPI_Clock_IO_Init(SPIx, Bayonet_SPI_MODE_SLAVE);
+	
+	SPIx->CR1 &=~ SPI_CR1_DFF;				//8 bit data mode. 
+	SPIx->CR1 |= SPI_CR1_CPOL;
+	SPIx->CR1 |= SPI_CR1_CPHA;				//
+	SPIx->CR1 &=~ SPI_CR1_LSBFIRST;		//MSB first. 
+	SPIx->CR1 &=~ SPI_CR1_MSTR;				//Slave mode. 
+	SPIx->CR1 &=~ SPI_CR1_SSM;				//Hardware slave configuration.  
+	SPIx->CR2 &=~ SPI_CR2_SSOE;
+	SPIx->CR1 |= SPI_CR1_SPE;					//ENABLE SPIx
+	SPIx->CR2 |= SPI_CR2_RXNEIE;			//Enable receive buffer not empty intterupt. 
+	
+	Bayonet_NVIC_Init(Bayonet_NVIC_GetIRQChannel_SPI(SPIx), prePriority, subPriority);
+}
+
+uint8_t Bayonet_SPI_ReadWriteByte(SPI_TypeDef *SPIx, uint8_t data)
+{
+	while(!(SPIx->SR & SPI_SR_TXE));
+	SPIx->DR = data;
+	while(!(SPIx->SR & SPI_SR_RXNE));
+	return SPIx->DR;
+}
+
+uint8_t Bayonet_SPI_ReadWriteBuff(SPI_TypeDef *SPIx, uint8_t *data, uint8_t count)
+{
+	uint8_t i = 0;
+	for(i = 0; i < count; i++)
+		data[count] = Bayonet_SPI_ReadWriteByte(SPIx, data[count]);
+	
+	return 0;
 }
