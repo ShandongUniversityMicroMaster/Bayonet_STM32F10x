@@ -138,7 +138,7 @@ typedef enum{
 	Bayonet_RCC_PWR
 }Bayonet_RCC;
 
-void Bayonet_RCC_Active(Bayonet_RCC device);
+uint32_t Bayonet_RCC_Active(Bayonet_RCC device);
 void Bayonet_RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks);
 
 #endif

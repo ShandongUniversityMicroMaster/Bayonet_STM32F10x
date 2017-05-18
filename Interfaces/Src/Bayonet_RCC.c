@@ -174,130 +174,285 @@ void Bayonet_RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
 /**
   * @brief  RCC peripheral mapping. 
   * @param  GPIOx) where x can be (A..F) to select the GPIO port.
-  * @retval None 
+  * @retval Clock frequency of its bus. 
   */
-void Bayonet_RCC_Active(Bayonet_RCC device)
+uint32_t Bayonet_RCC_Active(Bayonet_RCC device)
 {
-		if(device == Bayonet_RCC_AFIO)
-			RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
-		else if(device == Bayonet_RCC_GPIOA)
-			RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
-		else if(device == Bayonet_RCC_GPIOB)
-			RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
-		else if(device == Bayonet_RCC_GPIOC)
-			RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
-		else if(device == Bayonet_RCC_GPIOD)
-			RCC->APB2ENR |= RCC_APB2ENR_IOPDEN;
+	RCC_ClocksTypeDef Clock_Structure;
+	Bayonet_RCC_GetClocksFreq(&Clock_Structure);
+	
+	if(device == Bayonet_RCC_AFIO)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
+	else if(device == Bayonet_RCC_GPIOA)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
+	else if(device == Bayonet_RCC_GPIOB)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
+	else if(device == Bayonet_RCC_GPIOC)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
+	else if(device == Bayonet_RCC_GPIOD)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_IOPDEN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
 #if !defined (STM32F10X_LD) && !defined (STM32F10X_LD_VL)
-		else if(device == Bayonet_RCC_GPIOE)
-			RCC->APB2ENR |= RCC_APB2ENR_IOPEEN;
+	else if(device == Bayonet_RCC_GPIOE)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_IOPEEN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
 #endif
 #if defined (STM32F10X_HD) || defined (STM32F10X_XL)
-		else if(device == Bayonet_RCC_GPIOF)
-			RCC->APB2ENR |= RCC_APB2ENR_IOPFEN;
-		else if(device == Bayonet_RCC_GPIOG)
-			RCC->APB2ENR |= RCC_APB2ENR_IOPGEN;
-		else if(device == Bayonet_RCC_TIM8)
-			RCC->APB2ENR |= RCC_APB2ENR_TIM8EN;
-		else if(device == Bayonet_RCC_ADC3)
-			RCC->APB2ENR |= RCC_APB2ENR_ADC3EN;
+	else if(device == Bayonet_RCC_GPIOF)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_IOPFEN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
+	else if(device == Bayonet_RCC_GPIOG)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_IOPGEN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
+	else if(device == Bayonet_RCC_TIM8)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_TIM8EN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
+	else if(device == Bayonet_RCC_ADC3)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_ADC3EN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
 #endif
 #ifdef STM32F10X_XL
-		else if(device == Bayonet_RCC_TIM9)
-			RCC->APB2ENR |= RCC_APB2ENR_TIM9EN;
-		else if(device == Bayonet_RCC_TIM10)
-			RCC->APB2ENR |= RCC_APB2ENR_TIM10EN;
-		else if(device == Bayonet_RCC_TIM11)
-			RCC->APB2ENR |= RCC_APB2ENR_TIM11EN;
+	else if(device == Bayonet_RCC_TIM9)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_TIM9EN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
+	else if(device == Bayonet_RCC_TIM10)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_TIM10EN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
+	else if(device == Bayonet_RCC_TIM11)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_TIM11EN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
 #endif
-		else if(device == Bayonet_RCC_ADC1)
-			RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
-		else if(device == Bayonet_RCC_ADC2)
-			RCC->APB2ENR |= RCC_APB2ENR_ADC2EN;
-		else if(device == Bayonet_RCC_TIM1)
-			RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
-		else if(device == Bayonet_RCC_SPI1)
-			RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
-		else if(device == Bayonet_RCC_UART1)
-			RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
-		else if(device == Bayonet_RCC_DMA1)
-			RCC->AHBENR |= RCC_AHBENR_DMA1EN;
+	else if(device == Bayonet_RCC_ADC1)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
+	else if(device == Bayonet_RCC_ADC2)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_ADC2EN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
+	else if(device == Bayonet_RCC_TIM1)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
+	else if(device == Bayonet_RCC_SPI1)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
+	else if(device == Bayonet_RCC_UART1)
+	{
+		RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+		return Clock_Structure.PCLK2_Frequency;
+	}
+	else if(device == Bayonet_RCC_DMA1)
+	{
+		RCC->AHBENR |= RCC_AHBENR_DMA1EN;
+		return Clock_Structure.HCLK_Frequency;
+	}
 #if defined (STM32F10X_HD) || defined  (STM32F10X_CL) || defined  (STM32F10X_HD_VL) || defined  (STM32F10X_XL)
-		else if(device == Bayonet_RCC_DMA2)
-			RCC->AHBENR |= RCC_AHBENR_DMA2EN;
+	else if(device == Bayonet_RCC_DMA2)
+	{
+		RCC->AHBENR |= RCC_AHBENR_DMA2EN;
+		return Clock_Structure.HCLK_Frequency;
+	}
 #endif
 #if defined (STM32F10X_HD) || defined (STM32F10X_XL)
-		else if(device == Bayonet_RCC_FSMC)
-			RCC->AHBENR |= RCC_AHBENR_FSMCEN;
-		else if(device == Bayonet_RCC_SDIO)
-			RCC->AHBENR |= RCC_AHBENR_SDIOEN;
+	else if(device == Bayonet_RCC_FSMC)
+	{
+		RCC->AHBENR |= RCC_AHBENR_FSMCEN;
+		return Clock_Structure.HCLK_Frequency;
+	}
+	else if(device == Bayonet_RCC_SDIO)
+	{
+		RCC->AHBENR |= RCC_AHBENR_SDIOEN;
+		return Clock_Structure.HCLK_Frequency;
+	}
 #endif
 #ifdef STM32F10X_CL
-		else if(device == Bayonet_RCC_OTGFS)
-			RCC->AHBENR |= RCC_AHBENR_OTGFSEN;
-		else if(device == Bayonet_RCC_ETHMAC)
-			RCC->AHBENR |= RCC_AHBENR_ETHMACEN;
-		else if(device == Bayonet_RCC_ETHMACTX)
-			RCC->AHBENR |= RCC_AHBENR_ETHMACTXEN;
-		else if(device == Bayonet_RCC_ETHMACRX)
-			RCC->AHBENR |= RCC_AHBENR_ETHMACRXEN;
+	else if(device == Bayonet_RCC_OTGFS)
+	{
+		RCC->AHBENR |= RCC_AHBENR_OTGFSEN;
+		return Clock_Structure.HCLK_Frequency;
+	}
+	else if(device == Bayonet_RCC_ETHMAC)
+	{
+		RCC->AHBENR |= RCC_AHBENR_ETHMACEN;
+		return Clock_Structure.HCLK_Frequency;
+	}
+	else if(device == Bayonet_RCC_ETHMACTX)
+	{
+		RCC->AHBENR |= RCC_AHBENR_ETHMACTXEN;
+		return Clock_Structure.HCLK_Frequency;
+	}
+	else if(device == Bayonet_RCC_ETHMACRX)
+	{
+		RCC->AHBENR |= RCC_AHBENR_ETHMACRXEN;
+		return Clock_Structure.HCLK_Frequency;
+	}
 #endif
-		else if(device == Bayonet_RCC_SRAM)
-			RCC->AHBENR |= RCC_AHBENR_SRAMEN;
-		else if(device == Bayonet_RCC_FLITF)
-			RCC->AHBENR |= RCC_AHBENR_FLITFEN;
-		else if(device == Bayonet_RCC_CRC)
-			RCC->AHBENR |= RCC_AHBENR_CRCEN;
-		else if(device == Bayonet_RCC_TIM2)
-			RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-		else if(device == Bayonet_RCC_TIM3)
-			RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
-		else if(device == Bayonet_RCC_WWDG)
-			RCC->APB1ENR |= RCC_APB1ENR_WWDGEN;
+	else if(device == Bayonet_RCC_SRAM)
+	{
+		RCC->AHBENR |= RCC_AHBENR_SRAMEN;
+		return Clock_Structure.HCLK_Frequency;
+	}
+	else if(device == Bayonet_RCC_FLITF)
+	{
+		RCC->AHBENR |= RCC_AHBENR_FLITFEN;
+		return Clock_Structure.HCLK_Frequency;
+	}
+	else if(device == Bayonet_RCC_CRC)
+	{
+		RCC->AHBENR |= RCC_AHBENR_CRCEN;
+		return Clock_Structure.HCLK_Frequency;
+	}
+	else if(device == Bayonet_RCC_TIM2)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
+	else if(device == Bayonet_RCC_TIM3)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
+	else if(device == Bayonet_RCC_WWDG)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_WWDGEN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
 #if !defined (STM32F10X_LD) && !defined (STM32F10X_LD_VL)
-		else if(device == Bayonet_RCC_TIM4)
-			RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
-		else if(device == Bayonet_RCC_SPI2)
-			RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
-		else if(device == Bayonet_RCC_UART3)
-			RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
-		else if(device == Bayonet_RCC_I2C2)
-			RCC->APB1ENR |= RCC_APB1ENR_I2C2EN;
+	else if(device == Bayonet_RCC_TIM4)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
+	else if(device == Bayonet_RCC_SPI2)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
+	else if(device == Bayonet_RCC_UART3)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
+	else if(device == Bayonet_RCC_I2C2)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_I2C2EN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
 #endif
 #if defined (STM32F10X_HD) || defined (STM32F10X_MD) || defined  (STM32F10X_LD) || defined  (STM32F10X_XL)
-		else if(device == Bayonet_RCC_USB)
-			RCC->APB1ENR |= RCC_APB1ENR_USBEN;
+	else if(device == Bayonet_RCC_USB)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_USBEN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
 #endif
 #if defined (STM32F10X_HD) || defined  (STM32F10X_CL)
-		else if(device == Bayonet_RCC_TIM5)
-			RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
-		else if(device == Bayonet_RCC_TIM6)
-			RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
-		else if(device == Bayonet_RCC_TIM7)
-			RCC->APB1ENR |= RCC_APB1ENR_TIM7EN;
-		else if(device == Bayonet_RCC_SPI3)
-			RCC->APB1ENR |= RCC_APB1ENR_SPI3EN;
-		else if(device == Bayonet_RCC_UART4)
-			RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
-		else if(device == Bayonet_RCC_UART5)
-			RCC->APB1ENR |= RCC_APB1ENR_UART5EN;
-		else if(device == Bayonet_RCC_DAC)
-			RCC->APB1ENR |= RCC_APB1ENR_DACEN;
+	else if(device == Bayonet_RCC_TIM5)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
+	else if(device == Bayonet_RCC_TIM6)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
+	else if(device == Bayonet_RCC_TIM7)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_TIM7EN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
+	else if(device == Bayonet_RCC_SPI3)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_SPI3EN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
+	else if(device == Bayonet_RCC_UART4)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
+	else if(device == Bayonet_RCC_UART5)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_UART5EN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
+	else if(device == Bayonet_RCC_DAC)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_DACEN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
 #endif
 #ifdef STM32F10X_CL
-		else if(device == Bayonet_RCC_CAN2)
-			RCC->APB1ENR |= RCC_APB1ENR_CAN2EN;
+	else if(device == Bayonet_RCC_CAN2)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_CAN2EN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
 #endif
-		else if(device == Bayonet_RCC_UART2)
-			RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
-		else if(device == Bayonet_RCC_I2C1)
-			RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
-		else if(device == Bayonet_RCC_CAN1)
-			RCC->APB1ENR |= RCC_APB1ENR_CAN1EN;
-		else if(device == Bayonet_RCC_BKP)
-			RCC->APB1ENR |= RCC_APB1ENR_BKPEN;
-		else if(device == Bayonet_RCC_PWR)
-			RCC->APB1ENR |= RCC_APB1ENR_PWREN;
-		else
-			AssertFailed("Device not exit. ", __FILE__, __LINE__);
+	else if(device == Bayonet_RCC_UART2)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
+	else if(device == Bayonet_RCC_I2C1)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
+	else if(device == Bayonet_RCC_CAN1)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_CAN1EN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
+	else if(device == Bayonet_RCC_BKP)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_BKPEN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
+	else if(device == Bayonet_RCC_PWR)
+	{
+		RCC->APB1ENR |= RCC_APB1ENR_PWREN;
+		return Clock_Structure.PCLK1_Frequency;
+	}
+	else
+		AssertFailed("Device not exit. ", __FILE__, __LINE__);
+	
+	return 1;
 }
