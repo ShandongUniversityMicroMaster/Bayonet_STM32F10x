@@ -40,6 +40,13 @@
 
 //Bayonet_TIM_MODE bayonetTIMMode[14][4] = {0};
 
+/**
+  * @brief  Configuring clocks and IO port for the specific timer channel. 
+  * @param  TIMx: where x can be (1..14) to select timer. 
+  * @param  CHx: where x can be (1..4) to select channel. 
+  * @param  mode: timer working mode. 
+  * @retval 0 for success. 
+  */
 uint32_t Bayonet_TIM_CLOCK_IO_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, Bayonet_TIM_MODE Mode)
 {
 	GPIO_TypeDef *port;
@@ -159,20 +166,36 @@ uint32_t Bayonet_TIM_CLOCK_IO_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, B
 	return freq;
 }
 
-//TIM2-7
-uint8_t Bayonet_TIM_INT_Init(TIM_TypeDef *TIMx, uint32_t Prescaler, uint32_t ReloadValue, uint8_t PrePriority, uint8_t SubPriority)
+/**
+  * @brief  Initializing timer with interrupt mode. 
+  * @param  TIMx: where x can be (1..14) to select timer. 
+  * @param  microseconds: how many microseconds between two interrupts. 
+  * @param  prePriority: PreemptionPriority. 
+  * @param  subPriority: SubPriority. 
+  * @retval 0 for success. 
+  */
+uint8_t Bayonet_TIM_INT_Init(TIM_TypeDef *TIMx, uint32_t microseconds, uint8_t prePriority, uint8_t subPriority)
 {
+	RCC_ClocksTypeDef Clock_Structure;
+	Bayonet_RCC_GetClocksFreq(&Clock_Structure);
 	Bayonet_TIM_CLOCK_IO_Init(TIMx, Bayonet_TIM_CH0, Bayonet_TIM_MODE_INT); //Dummy channel. 
 	
-	TIMx->PSC = Prescaler;
-	TIMx->ARR = ReloadValue;
+	TIMx->PSC = Clock_Structure.SYSCLK_Frequency / 1000000 - 1;		//Prescale time count to 1 microsecond. Timer counts SYS_CLOCK. 
+	TIMx->ARR = microseconds;
 	TIMx->DIER |= TIM_DIER_UIE;
 	TIMx->CR1 |= TIM_CR1_CEN;
-	Bayonet_NVIC_Init(Bayonet_NVIC_GetIRQChannel_TIM(TIMx, Bayonet_TIM_MODE_INT), PrePriority, SubPriority);
+	Bayonet_NVIC_Init(Bayonet_NVIC_GetIRQChannel_TIM(TIMx, Bayonet_TIM_MODE_INT), prePriority, subPriority);
 	
 	return 0;
 }
 
+/**
+  * @brief  Initializing specific channel with PWM mode. 
+  * @param  TIMx: where x can be (1..14) to select timer. 
+  * @param  CHx: where x can be (1..4) to select channel. 
+  * @param  cycleTime: time of the PWM cycle, in microseconds. 
+  * @retval 0 for success. 
+  */
 uint8_t Bayonet_TIM_PWM_Channel_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uint32_t cycleTime)
 {
 	RCC_ClocksTypeDef Clock_Structure;
@@ -211,7 +234,28 @@ uint8_t Bayonet_TIM_PWM_Channel_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx,
 	TIMx->CR1 |= TIM_CR1_ARPE;
 	TIMx->CR1 |= TIM_CR1_CEN;
 	
-	//TIMx
-	
+	return 0;
+}
+
+/**
+  * @brief  Reconfiguring duty cycle of the specific channel. 
+  * @param  TIMx: where x can be (1..14) to select timer. 
+  * @param  CHx: where x can be (1..4) to select channel. 
+  * @param  dutyValue: time of the PWM cycle, in microseconds. 
+  * @retval 0 for success. 
+  */
+uint8_t Bayonet_TIM_PWM_Duty(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uint16_t dutyTime)
+{
+	if(CHx == Bayonet_TIM_CH0)
+		TIMx->CCR1 = dutyTime;
+	else if(CHx == Bayonet_TIM_CH1)
+		TIMx->CCR2 = dutyTime;
+	else if(CHx == Bayonet_TIM_CH2)
+		TIMx->CCR3 = dutyTime;
+	else if(CHx == Bayonet_TIM_CH3)
+		TIMx->CCR4 = dutyTime;
+	else
+		AssertFailed("Timer channel not exist..", __FILE__, __LINE__);
+		
 	return 0;
 }

@@ -51,7 +51,8 @@ typedef enum{
 	Bayonet_TIM_CH3
 }Bayonet_TIM_CHANNEL;
 
-uint8_t Bayonet_TIM_INT_Init(TIM_TypeDef *TIMx, uint32_t Prescaler, uint32_t ReloadValue, uint8_t PrePriority, uint8_t SubPriority);
-uint8_t Bayonet_TIM_PWM_Channel_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uint32_t frequency);
+uint8_t Bayonet_TIM_INT_Init(TIM_TypeDef *TIMx, uint32_t microseconds, uint8_t prePriority, uint8_t subPriority);
+uint8_t Bayonet_TIM_PWM_Channel_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uint32_t cycleTime);
+uint8_t Bayonet_TIM_PWM_Duty(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uint16_t dutyTime);
 
 #endif
