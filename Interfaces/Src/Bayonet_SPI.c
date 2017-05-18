@@ -38,6 +38,14 @@
 #include "Bayonet_GPIO.h"
 #include "Bayonet_NVIC.h"
 
+//uint8_t bayonetSPIMode[3] = {0};
+
+/**
+  * @brief  Configuring clocks and IO port for SPI interface. 
+  * @param  SPIx: where x can be (1..3) to select SPI interface.
+  * @param  mode: SPI working in master mode or slave mode. 
+  * @retval None
+  */
 void Bayonet_SPI_Clock_IO_Init(SPI_TypeDef *SPIx, uint8_t mode)
 {
 	Bayonet_GPIO_Mode modeIO[3];
@@ -60,7 +68,6 @@ void Bayonet_SPI_Clock_IO_Init(SPI_TypeDef *SPIx, uint8_t mode)
 		Bayonet_RCC_Active(Bayonet_RCC_SPI1);
 		Bayonet_RCC_Active(Bayonet_RCC_GPIOA);
 		
-		//Bayonet_GPIO_Init(GPIOA, 4, Bayonet_GPIO_MODE_GPIU);
 		Bayonet_GPIO_Init(GPIOA, 5, modeIO[0]);				//SCK
 		Bayonet_GPIO_Init(GPIOA, 6, modeIO[1]);				//MISO
 		Bayonet_GPIO_Init(GPIOA, 7, modeIO[2]);				//MOSI
@@ -86,11 +93,22 @@ void Bayonet_SPI_Clock_IO_Init(SPI_TypeDef *SPIx, uint8_t mode)
 		AssertFailed("SPI devices not found. ", __FILE__, __LINE__);
 }
 
-void Bayonet_SPI_Init_Master(SPI_TypeDef *SPIx, uint16_t speed)
+/**
+  * @brief  Initializing SPI interface with master mode. 
+  * @param  SPIx: where x can be (1..3) to select SPI interface.
+  * @param  spped: SPI working badurate. 
+  * @retval 0 for success. 
+  */
+uint8_t	Bayonet_SPI_Init_Master(SPI_TypeDef *SPIx, Bayonet_SPI_SPEED speed)
 {
+	RCC_ClocksTypeDef frequency;
+	uint8_t fraction;
 	Bayonet_SPI_Clock_IO_Init(SPIx, Bayonet_SPI_MODE_MASTER);
+	Bayonet_RCC_GetClocksFreq(&frequency);
 	
-	SPIx->CR1 |= 3 << 3;
+	fraction = 36000000 / frequency.PCLK2_Frequency;
+	SPIx->CR1 |= (speed << 3) >> fraction;
+	
 	SPIx->CR1 |= SPI_CR1_CPOL;
 	SPIx->CR1 |= SPI_CR1_CPHA;
 	SPIx->CR1 &=~ SPI_CR1_DFF;
@@ -101,9 +119,18 @@ void Bayonet_SPI_Init_Master(SPI_TypeDef *SPIx, uint16_t speed)
 	SPIx->CR1 |= SPI_CR1_SPE;
 	
 	Bayonet_SPI_ReadWriteByte(SPIx, 0xff);
+	
+	return 0;
 }
 
-void Bayonet_SPI_Init_Slave(SPI_TypeDef *SPIx, uint8_t prePriority, uint8_t subPriority)
+/**
+  * @brief  Initializing SPI interface with slave mode. 
+  * @param  SPIx: where x can be (1..3) to select SPI interface.
+  * @param  prePriority: preemptionPriority for SPI receive interrupt. 
+  * @param  subPriority: subPriority for SPI receive interrupt. 
+  * @retval 0 for success. 
+  */
+uint8_t Bayonet_SPI_Init_Slave(SPI_TypeDef *SPIx, uint8_t prePriority, uint8_t subPriority)
 {
 	Bayonet_SPI_Clock_IO_Init(SPIx, Bayonet_SPI_MODE_SLAVE);
 	
@@ -118,8 +145,16 @@ void Bayonet_SPI_Init_Slave(SPI_TypeDef *SPIx, uint8_t prePriority, uint8_t subP
 	SPIx->CR2 |= SPI_CR2_RXNEIE;			//Enable receive buffer not empty intterupt. 
 	
 	Bayonet_NVIC_Init(Bayonet_NVIC_GetIRQChannel_SPI(SPIx), prePriority, subPriority);
+	
+	return 0;
 }
 
+/**
+  * @brief  Start one data transfer. 
+  * @param  SPIx: where x can be (1..3) to select SPI interface.
+  * @param  data: data to send. 
+  * @retval data received. 
+  */
 uint8_t Bayonet_SPI_ReadWriteByte(SPI_TypeDef *SPIx, uint8_t data)
 {
 	while(!(SPIx->SR & SPI_SR_TXE));
@@ -128,6 +163,13 @@ uint8_t Bayonet_SPI_ReadWriteByte(SPI_TypeDef *SPIx, uint8_t data)
 	return SPIx->DR;
 }
 
+/**
+  * @brief  Transfer <count> bytes data, receiving data will overwrite sending buffer. 
+  * @param  SPIx: where x can be (1..3) to select SPI interface.
+  * @param  data: pointing to the buffer of data to send. 
+  * @param  count: how many bytes data to transfer. 
+  * @retval 0 for success. 
+  */
 uint8_t Bayonet_SPI_ReadWriteBuff(SPI_TypeDef *SPIx, uint8_t *data, uint8_t count)
 {
 	uint8_t i = 0;
