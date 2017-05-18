@@ -38,101 +38,180 @@
 #include "Bayonet_NVIC.h"
 #include "Bayonet_GPIO.h"
 
-uint8_t channel;
+//Bayonet_TIM_MODE bayonetTIMMode[14][4] = {0};
 
-void Bayonet_TIM_Active(TIM_TypeDef *TIMx, uint8_t Mode, uint32_t CHx)
+uint32_t Bayonet_TIM_CLOCK_IO_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, Bayonet_TIM_MODE Mode)
 {
-	//RCC.
+	GPIO_TypeDef *port;
+	uint8_t pin;
+	uint32_t freq;
+	
 	if(TIMx == TIM1)
 	{
-		Bayonet_RCC_Active(Bayonet_RCC_TIM1);
-		channel = TIM1_UP_IRQn;
+		freq = Bayonet_RCC_Active(Bayonet_RCC_TIM1);
 	}
 	else if(TIMx == TIM2)
 	{
-		Bayonet_RCC_Active(Bayonet_RCC_TIM2);
-		switch(Mode)
+		freq = Bayonet_RCC_Active(Bayonet_RCC_TIM2);
+		if(Mode != Bayonet_TIM_MODE_INT)
 		{
-			case Bayonet_TIM_MODE_INT:
-				channel = TIM2_IRQn;
-				break;
-			case Bayonet_TIM_MODE_PWM:
-				Bayonet_RCC_Active(Bayonet_RCC_GPIOA);
-				Bayonet_RCC_Active(Bayonet_RCC_AFIO);
-				if(CHx & Bayonet_TIM_CH0)
-					Bayonet_GPIO_Init(GPIOA, 0, Bayonet_GPIO_MODE_GPOAPP);
-				if(CHx & Bayonet_TIM_CH0)
-					Bayonet_GPIO_Init(GPIOA, 1, Bayonet_GPIO_MODE_GPOAPP);
-				if(CHx & Bayonet_TIM_CH0)
-					Bayonet_GPIO_Init(GPIOA, 2, Bayonet_GPIO_MODE_GPOAPP);
-				if(CHx & Bayonet_TIM_CH0)
-					Bayonet_GPIO_Init(GPIOA, 3, Bayonet_GPIO_MODE_GPOAPP);
-				break;
+			port = GPIOA;
+			if(CHx == Bayonet_TIM_CH0)
+				pin = 0;
+			else if(CHx == Bayonet_TIM_CH1)
+				pin = 1;
+			else if(CHx == Bayonet_TIM_CH2)
+				pin = 2;
+			else if(CHx == Bayonet_TIM_CH3)
+				pin = 3;
 		}
 	}
 	else if(TIMx == TIM3)
 	{
-		Bayonet_RCC_Active(Bayonet_RCC_TIM3);
-		channel = TIM3_IRQn;
+		freq = Bayonet_RCC_Active(Bayonet_RCC_TIM3);
+		if(Mode != Bayonet_TIM_MODE_INT)
+		{
+			if(CHx == Bayonet_TIM_CH0)
+			{
+				port = GPIOA;
+				pin = 6;
+			}
+			else if(CHx == Bayonet_TIM_CH1)
+			{
+				port = GPIOA;
+				pin = 7;
+			}
+			else if(CHx == Bayonet_TIM_CH2)
+			{
+				port = GPIOB;
+				pin = 0;
+			}
+			else if(CHx == Bayonet_TIM_CH3)
+			{
+				port = GPIOB;
+				pin = 1;
+			}
+		}
 	}
 	else if(TIMx == TIM4)
 	{
-		Bayonet_RCC_Active(Bayonet_RCC_TIM4);
-		channel = TIM4_IRQn;
+		freq = Bayonet_RCC_Active(Bayonet_RCC_TIM4);
+		if(Mode != Bayonet_TIM_MODE_INT)
+		{
+			port = GPIOB;
+			if(CHx == Bayonet_TIM_CH0)
+				pin = 6;
+			else if(CHx == Bayonet_TIM_CH1)
+				pin = 7;
+			else if(CHx == Bayonet_TIM_CH2)
+				pin = 8;
+			else if(CHx == Bayonet_TIM_CH3)
+				pin = 9;
+		}
 	}
-	/*else if(TIMx == TIM5)
+	else if(TIMx == TIM5)
 	{
-		Bayonet_RCC_Active(Bayonet_RCC_TIM5);
-		channel = TIM5_IRQn;
+		freq = Bayonet_RCC_Active(Bayonet_RCC_TIM5);
+		if(Mode != Bayonet_TIM_MODE_INT)
+		{
+			port = GPIOA;
+			if(CHx == Bayonet_TIM_CH0)
+				pin = 0;
+			else if(CHx == Bayonet_TIM_CH1)
+				pin = 1;
+			else if(CHx == Bayonet_TIM_CH2)
+				pin = 2;
+			else if(CHx == Bayonet_TIM_CH3)
+				pin = 3;
+		}
 	}
 	else if(TIMx == TIM6)
 	{
+		freq = Bayonet_RCC_Active(Bayonet_RCC_TIM6);
+		if(Mode != Bayonet_TIM_MODE_INT)
+			AssertFailed("Timer mode error. ", __FILE__, __LINE__);
 		Bayonet_RCC_Active(Bayonet_RCC_TIM6);
-		channel = TIM6_IRQn;
 	}
 	else if(TIMx == TIM7)
 	{
+		freq = Bayonet_RCC_Active(Bayonet_RCC_TIM7);
+		if(Mode != Bayonet_TIM_MODE_INT)
+			AssertFailed("Timer mode error. ", __FILE__, __LINE__);
 		Bayonet_RCC_Active(Bayonet_RCC_TIM7);
-		channel = TIM7_IRQn;
 	}
 	else if(TIMx == TIM8)
 	{
 		Bayonet_RCC_Active(Bayonet_RCC_TIM8);
-		channel = TIM8_UP_IRQn;
-	}*/
+	}
 	else
 		AssertFailed("TIM not exist.", __FILE__, __LINE__);
+	
+	if(Mode == Bayonet_TIM_MODE_ICAP)
+		Bayonet_GPIO_Init(port, pin, Bayonet_GPIO_MODE_GPIU);
+	else if(Mode == Bayonet_TIM_MODE_INT)
+	{//dummy operation. 
+	}
+	else if(Mode == Bayonet_TIM_MODE_PWM)
+		Bayonet_GPIO_Init(port, pin, Bayonet_GPIO_MODE_GPOAPP); 
+	else
+		AssertFailed("TIM mode not exist. ", __FILE__, __LINE__);
+	
+	return freq;
 }
 
 //TIM2-7
-void Bayonet_TIM_INT_Init(TIM_TypeDef *TIMx, uint32_t Prescaler, uint32_t ReloadValue, uint8_t PrePriority, uint8_t SubPriority)
+uint8_t Bayonet_TIM_INT_Init(TIM_TypeDef *TIMx, uint32_t Prescaler, uint32_t ReloadValue, uint8_t PrePriority, uint8_t SubPriority)
 {
-	Bayonet_TIM_Active(TIMx, Bayonet_TIM_MODE_INT, 0);
+	Bayonet_TIM_CLOCK_IO_Init(TIMx, Bayonet_TIM_CH0, Bayonet_TIM_MODE_INT); //Dummy channel. 
 	
 	TIMx->PSC = Prescaler;
 	TIMx->ARR = ReloadValue;
 	TIMx->DIER |= TIM_DIER_UIE;
 	TIMx->CR1 |= TIM_CR1_CEN;
-	Bayonet_NVIC_Init(channel, PrePriority, SubPriority);
+	Bayonet_NVIC_Init(Bayonet_NVIC_GetIRQChannel_TIM(TIMx, Bayonet_TIM_MODE_INT), PrePriority, SubPriority);
+	
+	return 0;
 }
 
-void Bayonet_TIM_PWM_Init(TIM_TypeDef *TIMx, uint32_t Prescaler, uint32_t ReloadValue, uint32_t CHx)
+uint8_t Bayonet_TIM_PWM_Channel_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uint32_t cycleTime)
 {
-	Bayonet_TIM_Active(TIMx, Bayonet_TIM_MODE_PWM, CHx);
+	RCC_ClocksTypeDef Clock_Structure;
+	Bayonet_RCC_GetClocksFreq(&Clock_Structure);
+	Bayonet_TIM_CLOCK_IO_Init(TIMx, CHx, Bayonet_TIM_MODE_PWM);
 	
-	TIMx->PSC = Prescaler - 1;
-	TIMx->ARR = ReloadValue;
+	TIMx->PSC = Clock_Structure.SYSCLK_Frequency / 1000000 - 1;		//Prescale time count to 1 microsecond. Timer counts SYS_CLOCK. 
+	if(cycleTime < 1000000)
+		TIMx->ARR = cycleTime - 1;																		//How many micro seconds per cycle. 
+	else
+		AssertFailed("Cycle time overflow. ", __FILE__, __LINE__);
 	
-	TIMx->CCMR1 |= TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2;		//PWM Mode 2.
-	TIMx->CCMR1 |= TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2;
-	TIMx->CCMR2 |= TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2;
-	TIMx->CCMR2 |= TIM_CCMR2_OC4M_1 | TIM_CCMR2_OC4M_2;
-	TIMx->CCMR1 |= TIM_CCMR1_IC1PSC_0;
-	TIMx->CCER |= TIM_CCER_CC1E | TIM_CCER_CC2E | TIM_CCER_CC3E | TIM_CCER_CC4E;
+	if(CHx == Bayonet_TIM_CH0)
+	{
+		TIMx->CCMR1 |= TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2;	//PWM 1 mode. 
+		TIMx->CCER  |= TIM_CCER_CC1E;
+	}
+	else if(CHx == Bayonet_TIM_CH1)
+	{
+		TIMx->CCMR1 |= TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2;
+		TIMx->CCER  |= TIM_CCER_CC2E;
+	}
+	else if(CHx == Bayonet_TIM_CH2)
+	{
+		TIMx->CCMR2 |= TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2;
+		TIMx->CCER  |= TIM_CCER_CC3E;
+	}
+	else if(CHx == Bayonet_TIM_CH3)
+	{
+		TIMx->CCMR2 |= TIM_CCMR2_OC4M_1 | TIM_CCMR2_OC4M_2;
+		TIMx->CCER  |= TIM_CCER_CC4E;
+	}
+	else
+		AssertFailed("CHx does not exist. ", __FILE__, __LINE__);
+	
 	TIMx->CR1 |= TIM_CR1_ARPE;
 	TIMx->CR1 |= TIM_CR1_CEN;
-	TIMx->CCR1 = 20;
-	TIMx->CCR2 = 20;
-	TIMx->CCR3 = 20;
-	TIMx->CCR4 = 20;
+	
+	//TIMx
+	
+	return 0;
 }
