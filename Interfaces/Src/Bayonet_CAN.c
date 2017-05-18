@@ -38,8 +38,6 @@
 #include "Bayonet_NVIC.h"
 #include "Bayonet_UART.h"
 
-extern uint8_t ID;
-
 void Bayonet_CAN_CLOCK_IO_Init(CAN_TypeDef *CANx)
 {
 	if(CANx == CAN1)
@@ -50,7 +48,7 @@ void Bayonet_CAN_CLOCK_IO_Init(CAN_TypeDef *CANx)
 	}
 }
 
-Bayonet_CAN_STATE Bayonet_CAN_Init(CAN_TypeDef *CANx)
+Bayonet_CAN_STATE Bayonet_CAN_Init(CAN_TypeDef *CANx, uint8_t ID)
 {
 	uint8_t i = 0;
 	/*RCC_ClocksTypeDef RCC_Clock;
@@ -79,7 +77,7 @@ Bayonet_CAN_STATE Bayonet_CAN_Init(CAN_TypeDef *CANx)
 	CANx->BTR |= 7 << 20;
 	CANx->BTR |= 8 << 16; 
 	//(RCC_Clock.PCLK1_Frequency / 500000)
-	CANx->BTR |= 3;
+	CANx->BTR |= 1;
 	CANx->MCR &=~ CAN_MCR_INRQ;
 	while(CAN1->MSR & CAN_MSR_INAK) 		//Waiting for CAN device to response. 
 	{

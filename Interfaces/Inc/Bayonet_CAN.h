@@ -100,7 +100,7 @@ typedef struct
                         value between 0 to 0xFF */
 } CanRxMsg;
 
-Bayonet_CAN_STATE Bayonet_CAN_Init(CAN_TypeDef *CANx);
+Bayonet_CAN_STATE Bayonet_CAN_Init(CAN_TypeDef *CANx, uint8_t ID);
 Bayonet_CAN_STATE Bayonet_CAN_SendMessage(CAN_TypeDef *CANx, uint32_t id, uint8_t *data, uint8_t length);
 
 #endif
