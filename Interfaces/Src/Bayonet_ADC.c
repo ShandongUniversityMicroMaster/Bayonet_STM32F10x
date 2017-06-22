@@ -168,19 +168,19 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 	if(ADC_CHx == Bayonet_ADC_CH12)	//PC2
 	{
 		RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
-		GPIOA->CRL &=~ (GPIO_CRL_CNF2 | GPIO_CRL_MODE2);
+		GPIOC->CRL &=~ (GPIO_CRL_CNF2 | GPIO_CRL_MODE2);
 	}
 	if(ADC_CHx == Bayonet_ADC_CH13)	//PC3
 	{
 		RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
-		GPIOA->CRL &=~ (GPIO_CRL_CNF3 | GPIO_CRL_MODE3);
+		GPIOC->CRL &=~ (GPIO_CRL_CNF3 | GPIO_CRL_MODE3);
 	}
 	if(ADC_CHx == Bayonet_ADC_CH14)	//PC4
 	{
-		if(ADCx == ADC1 || ADCx == ADC2) //PA4
+		if(ADCx == ADC1 || ADCx == ADC2)
 		{
 			RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
-			GPIOA->CRL &=~ (GPIO_CRL_CNF4 | GPIO_CRL_MODE4);
+			GPIOC->CRL &=~ (GPIO_CRL_CNF4 | GPIO_CRL_MODE4);
 		}
 		else
 			AssertFailed("Channel not exist...", __FILE__, __LINE__);
@@ -190,7 +190,7 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 		if(ADCx == ADC1 || ADCx == ADC2) //PA4
 		{
 			RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
-			GPIOA->CRL &=~ (GPIO_CRL_CNF5 | GPIO_CRL_MODE5);
+			GPIOC->CRL &=~ (GPIO_CRL_CNF5 | GPIO_CRL_MODE5);
 		}
 		else
 			AssertFailed("Channel not exist...", __FILE__, __LINE__);
