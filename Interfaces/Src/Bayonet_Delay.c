@@ -52,7 +52,7 @@ void Bayonet_Delay_Init(void)
 	RCC_ClocksTypeDef RCC_ClocksStructure;
 	Bayonet_RCC_GetClocksFreq(&RCC_ClocksStructure);
 	SysTick->CTRL &=~ SysTick_CTRL_CLKSOURCE;	//External clock. 
-	fac_us = (RCC_ClocksStructure.SYSCLK_Frequency / 1000000) >> 3;
+	fac_us = (RCC_ClocksStructure.HCLK_Frequency / 1000000) >> 3;			//Note: the default systick clock source is SYSCLK / 8. 
 	fac_ms = (uint16_t)fac_us * 1000;
 	delayIsInit = true;
 }
