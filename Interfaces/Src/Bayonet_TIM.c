@@ -203,14 +203,30 @@ uint8_t Bayonet_TIM_INT_Init(TIM_TypeDef *TIMx, uint32_t microseconds, uint8_t p
 uint8_t Bayonet_TIM_PWM_Channel_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uint32_t cycleTime)
 {
 	RCC_ClocksTypeDef Clock_Structure;
+	uint32_t preScaler = 0;
 	Bayonet_RCC_GetClocksFreq(&Clock_Structure);
 	Bayonet_TIM_CLOCK_IO_Init(TIMx, CHx, Bayonet_TIM_MODE_PWM);
 	
-	TIMx->PSC = Clock_Structure.SYSCLK_Frequency / 1000000 - 1;		//Prescale time count to 1 microsecond. Timer counts SYS_CLOCK. 
 	if(cycleTime < 1000000)
-		TIMx->ARR = cycleTime - 1;																		//How many micro seconds per cycle. 
+	{
+		if(cycleTime > 0xffff)		//If one cycle overflows 0xffff, using millisecond as time atom. 
+		{
+			preScaler = 1000;
+			TIMx->ARR = cycleTime / 1000 - 1;															//How many milliseconds per cycle. 
+		}
+		else
+		{
+			preScaler = 1000000;
+			TIMx->ARR = cycleTime - 1;																		//How many microseconds per cycle. 
+		}
+	}
 	else
 		AssertFailed("Cycle time overflow. ", __FILE__, __LINE__);
+	
+	if(TIMx == TIM1 || TIMx == TIM8)
+		TIMx->PSC = Clock_Structure.PCLK2_Frequency / preScaler - 1;		//Prescale time count to 1 microsecond. Timer counts SYS_CLOCK. 
+	else
+		TIMx->PSC = Clock_Structure.PCLK1_Frequency / preScaler - 1;
 	
 	if(CHx == Bayonet_TIM_CH0)
 	{
