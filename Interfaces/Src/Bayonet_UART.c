@@ -101,10 +101,12 @@ void UART_NVIC_Configuration(USART_TypeDef *USARTx, uint8_t PrePriority, uint8_t
 		channel = USART2_IRQn;
 	else if(USARTx == USART3)
 		channel = USART3_IRQn;
-	/*else if(USARTx == UART4)
+#if defined (STM32F10X_HD) || defined  (STM32F10X_CL)
+	else if(USARTx == UART4)
 		channel = UART4_IRQn;
 	else if(USARTx == UART5)
-		channel = UART5_IRQn;*/
+		channel = UART5_IRQn;
+#endif
 	
 	Bayonet_NVIC_Init(channel, PrePriority, SubPriority);
 }
@@ -147,7 +149,8 @@ void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound, uint8_t prePr
 		RCC->APB1RSTR |= RCC_APB1RSTR_USART3RST;
 		RCC->APB1RSTR &=~ RCC_APB1RSTR_USART3RST;
 	}
-	/*else if(USARTx == UART4)
+#if defined (STM32F10X_HD) || defined  (STM32F10X_CL)
+	else if(USARTx == UART4)
 	{
 		RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
 		RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
@@ -167,7 +170,8 @@ void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound, uint8_t prePr
 		GPIOD->CRL |= GPIO_CRL_CNF2_1;
 		RCC->APB1RSTR |= RCC_APB1RSTR_UART5RST;
 		RCC->APB1RSTR &=~ RCC_APB1RSTR_UART5RST;
-	}*/
+	}
+#endif
 	else
 	{
 		AssertFailed("USART port not exist.\r\n", __FILE__, __LINE__);
