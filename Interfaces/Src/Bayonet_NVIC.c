@@ -66,17 +66,21 @@ uint8_t Bayonet_NVIC_GetIRQChannel_TIM(TIM_TypeDef *TIMx, Bayonet_TIM_MODE mode)
 		return TIM3_IRQn;
 	else if(TIMx == TIM4)
 		return TIM4_IRQn;
+#if defined (STM32F10X_HD) || defined  (STM32F10X_CL)
 	else if(TIMx == TIM5)
 		return TIM5_IRQn;
 	else if(TIMx == TIM6)
 		return TIM6_IRQn;
 	else if(TIMx == TIM7)
 		return TIM7_IRQn;
+#endif
+#if defined (STM32F10X_HD) || defined (STM32F10X_XL)
 	else if(TIMx == TIM8)
 	{
 		if(mode == Bayonet_TIM_MODE_INT)
 			return TIM8_UP_IRQn;
 	}
+#endif
 	
 	return 1;
 }

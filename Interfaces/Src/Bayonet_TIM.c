@@ -116,6 +116,7 @@ uint32_t Bayonet_TIM_CLOCK_IO_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, B
 				pin = 9;
 		}
 	}
+#if defined (STM32F10X_HD) || defined  (STM32F10X_CL)
 	else if(TIMx == TIM5)
 	{
 		freq = Bayonet_RCC_Active(Bayonet_RCC_TIM5);
@@ -146,10 +147,13 @@ uint32_t Bayonet_TIM_CLOCK_IO_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, B
 			AssertFailed("Timer mode error. ", __FILE__, __LINE__);
 		Bayonet_RCC_Active(Bayonet_RCC_TIM7);
 	}
+#endif
+#if defined (STM32F10X_HD) || defined (STM32F10X_XL)
 	else if(TIMx == TIM8)
 	{
 		Bayonet_RCC_Active(Bayonet_RCC_TIM8);
 	}
+#endif
 	else
 		AssertFailed("TIM not exist.", __FILE__, __LINE__);
 	

@@ -205,3 +205,15 @@ uint8_t Bayonet_IIC_WriteBit(Bayonet_IIC_Device device, uint8_t slaveAddress, ui
 	b = (data != 0) ? (b | (1 << bitNum)) : (b & ~(1 << bitNum));
 	return Bayonet_IIC_WriteBytes(device, slaveAddress, reg, 1, &b);
 }
+
+uint8_t Bayonet_IIC_WriteBits(Bayonet_IIC_Device device, uint8_t slaveAddress, uint8_t reg, uint8_t bitStart, uint8_t length, uint8_t data)
+{
+	uint8_t oldData, mask;
+	Bayonet_IIC_ReadBytes(device, slaveAddress, reg, 1, &oldData);
+	mask = (0xff << (bitStart + 1)) | 0xff >> ((8 - bitStart) + length - 1);
+	data <<= (8 - length);
+	data >>= (7 - bitStart);
+	oldData &= mask;
+	oldData |= data;
+	return Bayonet_IIC_WriteBytes(device, slaveAddress, reg, 1, &data);
+}
