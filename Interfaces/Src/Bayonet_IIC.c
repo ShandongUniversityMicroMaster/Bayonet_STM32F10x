@@ -38,7 +38,7 @@
 
 uint8_t deviceNumber = 0; 
 
-Bayonet_IIC_Device Bayonet_IIC_Init(GPIO_TypeDef *SDA_Port, uint8_t SDA_Pin, GPIO_TypeDef *SCL_Port, uint8_t SCL_Pin)
+Bayonet_IIC_Device Bayonet_IIC_CreateDevice(GPIO_TypeDef *SDA_Port, uint8_t SDA_Pin, GPIO_TypeDef *SCL_Port, uint8_t SCL_Pin)
 {
 	Bayonet_IIC_Device device;
 	device.SDA_Port = SDA_Port;
