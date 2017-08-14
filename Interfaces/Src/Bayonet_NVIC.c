@@ -131,6 +131,11 @@ uint8_t Bayonet_NVIC_GetIRQChannel_DMA(DMA_Channel_TypeDef *CHx)
 	return 1;
 }
 
+/**
+  * @brief  Mapping SPI peripheral and IRQ channel. 
+  * @param  SPIx: SPI device needed to map.
+  * @retval the IRQ channel of the SPI device. 
+  */
 uint8_t Bayonet_NVIC_GetIRQChannel_SPI(SPI_TypeDef *SPIx)
 {
 	if(SPIx == SPI1)
@@ -145,6 +150,37 @@ uint8_t Bayonet_NVIC_GetIRQChannel_SPI(SPI_TypeDef *SPIx)
 #endif
 	
 	return 1;
+}
+
+/**
+  * @brief  Mapping EXTI peripheral and IRQ channel. 
+  * @param  Pinx: GPIO pin needed to map.
+  * @retval the IRQ channel of the specific pin. 
+  */
+uint8_t Bayonet_NVIC_GetIRQChannel_EXTI(uint8_t Pinx)
+{
+	if(Pinx < 5)
+	{
+		switch(Pinx)
+		{
+			case 0:
+				return EXTI0_IRQn;
+			case 1:
+				return EXTI1_IRQn;
+			case 2:
+				return EXTI2_IRQn;
+			case 3:
+				return EXTI3_IRQn;
+			case 4:
+				return EXTI4_IRQn;
+		}
+	}
+	else if(Pinx < 10)
+		return EXTI9_5_IRQn;
+	else
+		return EXTI15_10_IRQn;
+	
+	return 0;
 }
 
 //This table was copied from ST standard peripheral lib, for non-commercial usage. 

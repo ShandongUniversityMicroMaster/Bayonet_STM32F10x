@@ -49,6 +49,8 @@ typedef enum{
   Bayonet_GPIO_MODE_GPOAOD
 }Bayonet_GPIO_Mode;
 
+uint8_t Bayonet_GPIO_GetPortIndex(GPIO_TypeDef *GPIOx);
+
 void Bayonet_GPIO_Init(GPIO_TypeDef *GPIOx, uint8_t Pinx, Bayonet_GPIO_Mode Mode);
 bool Bayonet_GPIO_Get(GPIO_TypeDef *GPIOx, uint8_t Pinx);
 void Bayonet_GPIO_Set(GPIO_TypeDef *GPIOx, uint8_t Pinx, bool state);

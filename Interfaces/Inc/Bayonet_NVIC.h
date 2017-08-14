@@ -54,6 +54,7 @@ void Bayonet_NVIC_Init(uint8_t IRQChannel, uint8_t PrePriority, uint8_t SubPrior
 uint8_t Bayonet_NVIC_GetIRQChannel_TIM(TIM_TypeDef *TIMx, Bayonet_TIM_MODE mode);
 uint8_t Bayonet_NVIC_GetIRQChannel_DMA(DMA_Channel_TypeDef *CHx);
 uint8_t Bayonet_NVIC_GetIRQChannel_SPI(SPI_TypeDef *SPIx);
+uint8_t Bayonet_NVIC_GetIRQChannel_EXTI(uint8_t Pinx);
 void Bayonet_NVIC_SetVectorTable(uint32_t NVIC_VectTab, uint32_t Offset);
 
 #endif

@@ -44,7 +44,7 @@ uint8_t bayonetGPIOPortMode[6][16];
   * @param  GPIOx: where x can be (A..F) to select the GPIO port.
   * @retval Port index. 
   */
-uint8_t Bayonet_GetPortIndex(GPIO_TypeDef *GPIOx)
+uint8_t Bayonet_GPIO_GetPortIndex(GPIO_TypeDef *GPIOx)
 {
 	if(GPIOx == GPIOA)
 		return 0;
@@ -54,8 +54,16 @@ uint8_t Bayonet_GetPortIndex(GPIO_TypeDef *GPIOx)
 		return 2;
 	else if(GPIOx == GPIOD)
 		return 3;
+#if !defined (STM32F10X_LD) && !defined (STM32F10X_LD_VL)
 	else if(GPIOx == GPIOE)
 		return 4;
+#endif
+#if defined (STM32F10X_HD) || defined (STM32F10X_XL)
+	else if(GPIOx == GPIOF)
+		return 5;
+	else if(GPIOx == GPIOG)
+		return 6;
+#endif
 	else
 		AssertFailed("Port not exist. File:%s, Line:%d ", __FILE__, __LINE__);
 	
@@ -70,7 +78,7 @@ uint8_t Bayonet_GetPortIndex(GPIO_TypeDef *GPIOx)
   */
 void Bayonet_AssertInputPort(GPIO_TypeDef *GPIOx, uint8_t Pinx)
 {
-	uint8_t mode = bayonetGPIOPortMode[Bayonet_GetPortIndex(GPIOx)][Pinx];
+	uint8_t mode = bayonetGPIOPortMode[Bayonet_GPIO_GetPortIndex(GPIOx)][Pinx];
 	if(mode > 3)
 		AssertFailed("This IO port is not in input mode. ", __FILE__, __LINE__);
 }
@@ -83,7 +91,7 @@ void Bayonet_AssertInputPort(GPIO_TypeDef *GPIOx, uint8_t Pinx)
   */
 void Bayonet_AssertOutputPort(GPIO_TypeDef *GPIOx, uint8_t Pinx)
 {
-		uint8_t mode = bayonetGPIOPortMode[Bayonet_GetPortIndex(GPIOx)][Pinx];
+		uint8_t mode = bayonetGPIOPortMode[Bayonet_GPIO_GetPortIndex(GPIOx)][Pinx];
 		if(mode < 4)
 			AssertFailed("This IO port is not in output mode. ", __FILE__, __LINE__); 
 }
@@ -147,7 +155,7 @@ void Bayonet_GPIO_Init(GPIO_TypeDef *GPIOx, uint8_t Pinx, Bayonet_GPIO_Mode Mode
 		GPIOx->CRH |=  (config << ((Pinx-8) * 4));
 	}
 	#ifdef Bayonet_Assert
-		bayonetGPIOPortMode[Bayonet_GetPortIndex(GPIOx)][Pinx] = Mode;
+		bayonetGPIOPortMode[Bayonet_GPIO_GetPortIndex(GPIOx)][Pinx] = Mode;
 	#endif
 }
 
