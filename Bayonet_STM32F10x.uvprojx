@@ -439,6 +439,11 @@
               <FileType>1</FileType>
               <FilePath>.\Interfaces\Src\Bayonet_IIC.c</FilePath>
             </File>
+            <File>
+              <FileName>Bayonet_EXTI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Interfaces\Src\Bayonet_EXTI.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
