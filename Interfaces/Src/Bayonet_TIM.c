@@ -176,9 +176,9 @@ uint32_t Bayonet_TIM_Clock_IO_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, B
   * @param  microseconds: how many microseconds between two interrupts. 
   * @param  prePriority: PreemptionPriority. 
   * @param  subPriority: SubPriority. 
-  * @retval 0 for success. 
+  * @retval None. 
   */
-uint8_t Bayonet_TIM_Init_Interrupt(TIM_TypeDef *TIMx, uint32_t microseconds, uint8_t prePriority, uint8_t subPriority)
+void Bayonet_TIM_Init_Interrupt(TIM_TypeDef *TIMx, uint32_t microseconds, uint8_t prePriority, uint8_t subPriority)
 {
 	RCC_ClocksTypeDef Clock_Structure;
 	Bayonet_RCC_GetClocksFreq(&Clock_Structure);
@@ -190,8 +190,6 @@ uint8_t Bayonet_TIM_Init_Interrupt(TIM_TypeDef *TIMx, uint32_t microseconds, uin
 	TIMx->CR1 |= TIM_CR1_CEN;
 	Bayonet_NVIC_Init(Bayonet_NVIC_GetIRQChannel_TIM(TIMx, Bayonet_TIM_MODE_INT), prePriority, subPriority);
 	TIMx->CR2 |= TIM_CR2_MMS_1;
-	
-	return 0;
 }
 
 /**
@@ -199,9 +197,9 @@ uint8_t Bayonet_TIM_Init_Interrupt(TIM_TypeDef *TIMx, uint32_t microseconds, uin
   * @param  TIMx: where x can be (1..14) to select timer. 
   * @param  CHx: where x can be (1..4) to select channel. 
   * @param  cycleTime: time of the PWM cycle, in microseconds. 
-  * @retval 0 for success. 
+  * @retval None. 
   */
-uint8_t Bayonet_TIM_Init_PWMChannel(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uint32_t cycleTime)
+void Bayonet_TIM_Init_PWMChannel(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uint32_t cycleTime)
 {
 	RCC_ClocksTypeDef Clock_Structure;
 	uint32_t preScaler = 0;
@@ -254,8 +252,6 @@ uint8_t Bayonet_TIM_Init_PWMChannel(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, 
 	
 	TIMx->CR1 |= TIM_CR1_ARPE;
 	TIMx->CR1 |= TIM_CR1_CEN;
-	
-	return 0;
 }
 
 /**
@@ -263,9 +259,9 @@ uint8_t Bayonet_TIM_Init_PWMChannel(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, 
   * @param  TIMx: where x can be (1..14) to select timer. 
   * @param  CHx: where x can be (1..4) to select channel. 
   * @param  dutyValue: time of the PWM cycle, in microseconds. 
-  * @retval 0 for success. 
+  * @retval None. 
   */
-uint8_t Bayonet_TIM_PWM_Duty(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uint16_t dutyTime)
+void Bayonet_TIM_PWM_Duty(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uint16_t dutyTime)
 {
 	if(CHx == Bayonet_TIM_CH0)
 		TIMx->CCR1 = dutyTime;
@@ -277,6 +273,4 @@ uint8_t Bayonet_TIM_PWM_Duty(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uint16_
 		TIMx->CCR4 = dutyTime;
 	else
 		AssertFailed("Timer channel not exist..", __FILE__, __LINE__);
-		
-	return 0;
 }

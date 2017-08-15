@@ -97,9 +97,9 @@ void Bayonet_SPI_Clock_IO_Init(SPI_TypeDef *SPIx, uint8_t mode)
   * @brief  Initializing SPI interface with master mode. 
   * @param  SPIx: where x can be (1..3) to select SPI interface.
   * @param  spped: SPI working badurate. 
-  * @retval 0 for success. 
+  * @retval None. 
   */
-uint8_t	Bayonet_SPI_Init_Master(SPI_TypeDef *SPIx, Bayonet_SPI_SPEED speed)
+void	Bayonet_SPI_Init_Master(SPI_TypeDef *SPIx, Bayonet_SPI_SPEED speed)
 {
 	RCC_ClocksTypeDef frequency;
 	uint8_t fraction;
@@ -119,8 +119,6 @@ uint8_t	Bayonet_SPI_Init_Master(SPI_TypeDef *SPIx, Bayonet_SPI_SPEED speed)
 	SPIx->CR1 |= SPI_CR1_SPE;
 	
 	Bayonet_SPI_ReadWriteByte(SPIx, 0xff);
-	
-	return 0;
 }
 
 /**
@@ -128,9 +126,9 @@ uint8_t	Bayonet_SPI_Init_Master(SPI_TypeDef *SPIx, Bayonet_SPI_SPEED speed)
   * @param  SPIx: where x can be (1..3) to select SPI interface.
   * @param  prePriority: preemptionPriority for SPI receive interrupt. 
   * @param  subPriority: subPriority for SPI receive interrupt. 
-  * @retval 0 for success. 
+  * @retval None. 
   */
-uint8_t Bayonet_SPI_Init_Slave(SPI_TypeDef *SPIx, uint8_t prePriority, uint8_t subPriority)
+void Bayonet_SPI_Init_Slave(SPI_TypeDef *SPIx, uint8_t prePriority, uint8_t subPriority)
 {
 	Bayonet_SPI_Clock_IO_Init(SPIx, Bayonet_SPI_MODE_SLAVE);
 	
@@ -145,8 +143,6 @@ uint8_t Bayonet_SPI_Init_Slave(SPI_TypeDef *SPIx, uint8_t prePriority, uint8_t s
 	SPIx->CR2 |= SPI_CR2_RXNEIE;			//Enable receive buffer not empty intterupt. 
 	
 	Bayonet_NVIC_Init(Bayonet_NVIC_GetIRQChannel_SPI(SPIx), prePriority, subPriority);
-	
-	return 0;
 }
 
 /**
@@ -170,11 +166,9 @@ uint8_t Bayonet_SPI_ReadWriteByte(SPI_TypeDef *SPIx, uint8_t data)
   * @param  count: how many bytes data to transfer. 
   * @retval 0 for success. 
   */
-uint8_t Bayonet_SPI_ReadWriteBuff(SPI_TypeDef *SPIx, uint8_t *data, uint8_t count)
+void Bayonet_SPI_ReadWriteBuff(SPI_TypeDef *SPIx, uint8_t *data, uint8_t count)
 {
 	uint8_t i = 0;
 	for(i = 0; i < count; i++)
 		data[count] = Bayonet_SPI_ReadWriteByte(SPIx, data[count]);
-	
-	return 0;
 }

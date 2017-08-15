@@ -19,8 +19,8 @@ typedef enum{
 	Bayonet_SPI_SPEED_140K625
 }Bayonet_SPI_SPEED;
 
-uint8_t Bayonet_SPI_Init_Master(SPI_TypeDef *SPIx, Bayonet_SPI_SPEED speed);
-uint8_t Bayonet_SPI_Init_Slave(SPI_TypeDef *SPIx, uint8_t prePriority, uint8_t subPriority);
+void Bayonet_SPI_Init_Master(SPI_TypeDef *SPIx, Bayonet_SPI_SPEED speed);
+void Bayonet_SPI_Init_Slave(SPI_TypeDef *SPIx, uint8_t prePriority, uint8_t subPriority);
 uint8_t Bayonet_SPI_ReadWriteByte(SPI_TypeDef *SPIx, uint8_t data);
 
 #endif
