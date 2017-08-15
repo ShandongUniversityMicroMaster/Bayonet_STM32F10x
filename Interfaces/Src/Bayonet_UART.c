@@ -64,6 +64,13 @@ int fputc(int ch, FILE *f)
 	return ch;
 }
 
+/**
+  * @brief  Assertion failed and waiting for DBG. 
+  * @param  str: error message. 
+  * @param  file: source file. 
+  * @param  line: line number of code. 
+  * @retval Index of the port. 
+  */
 void AssertFailed(char *str, char *file, int line)
 {
 	char strBuffer[200] = {0};
@@ -75,6 +82,11 @@ void AssertFailed(char *str, char *file, int line)
 	}
 }
 
+/**
+  * @brief  Translating UART port to index. 
+  * @param  USARTx: where x can be (1..6) to select the peripheral.
+  * @retval Index of the port. 
+  */
 uint8_t Bayonet_UART_GetIndex(USART_TypeDef *USARTx)
 {
 	if(USARTx == USART1)
@@ -91,6 +103,13 @@ uint8_t Bayonet_UART_GetIndex(USART_TypeDef *USARTx)
 		return 255;
 }
 
+/**
+  * @brief  Initializing NVIC channel of the specific UART. 
+  * @param  USARTx: where x can be (1..6) to select the peripheral.
+  * @param  prePriority: prePriority for interrupt. 
+  * @param  subPriority: subPriority for interrupt. 
+  * @retval None
+  */
 void UART_NVIC_Configuration(USART_TypeDef *USARTx, uint8_t PrePriority, uint8_t SubPriority)
 {
 	uint8_t channel;
@@ -111,12 +130,20 @@ void UART_NVIC_Configuration(USART_TypeDef *USARTx, uint8_t PrePriority, uint8_t
 	Bayonet_NVIC_Init(channel, PrePriority, SubPriority);
 }
 
-void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound, uint8_t prePriority, uint8_t subPriority)
+/**
+  * @brief  Initializing the specific UART. 
+  * @param  USARTx: where x can be (1..6) to select the peripheral.
+  * @param  baudrate: baudrate. 
+  * @param  prePriority: prePriority for interrupt. 
+  * @param  subPriority: subPriority for interrupt. 
+  * @retval None
+  */
+void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 baudrate, uint8_t prePriority, uint8_t subPriority)
 {
 	float temp;
 	u16 mantissa;
 	u16 fraction;
-	temp = (float)(pclk2*1000000.0)/(bound*16.0);
+	temp = (float)(pclk2*1000000.0)/(baudrate*16.0);
 	mantissa = temp;
 	fraction = (temp-mantissa)*16;
   mantissa <<= 4;
