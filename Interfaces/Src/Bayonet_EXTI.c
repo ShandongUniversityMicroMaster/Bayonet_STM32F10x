@@ -46,13 +46,12 @@ bool Bayonet_EXIT_isInit[16] = {false};
 	* @param  Pinx: the index of the pin to initialized.
   * @retval 0
   */
-int Bayonet_EXTI_CLOCK_IO_Init(GPIO_TypeDef* GPIOx, uint8_t Pinx)
+void Bayonet_EXTI_CLOCK_IO_Init(GPIO_TypeDef* GPIOx, uint8_t Pinx)
 {
 	Bayonet_RCC_Active(Bayonet_RCC_AFIO);
 	
 	Bayonet_GPIO_Init(GPIOx, Pinx, Bayonet_GPIO_MODE_GPIU);
 	
-	return 0;
 }
 
 /**
@@ -63,7 +62,7 @@ int Bayonet_EXTI_CLOCK_IO_Init(GPIO_TypeDef* GPIOx, uint8_t Pinx)
   * @param  SubPriority: subpriority of the channel.
   * @retval 0
   */
-int Bayonet_EXTI_Interrupt_Init(GPIO_TypeDef* GPIOx, uint8_t Pinx, Bayonet_EXTI_TRIGGER trigger, uint8_t PrePriority, uint8_t SubPriority)
+void Bayonet_EXTI_Interrupt_Init(GPIO_TypeDef* GPIOx, uint8_t Pinx, Bayonet_EXTI_TRIGGER trigger, uint8_t PrePriority, uint8_t SubPriority)
 {
 	if(Pinx > 15)
 		AssertFailed("The index of pin exceeded. ", __FILE__, __LINE__);
@@ -94,7 +93,6 @@ int Bayonet_EXTI_Interrupt_Init(GPIO_TypeDef* GPIOx, uint8_t Pinx, Bayonet_EXTI_
 		
 	Bayonet_NVIC_Init(Bayonet_NVIC_GetIRQChannel_EXTI(Pinx), PrePriority, SubPriority);
 	
-	return 0;
 }
 
 /*****************************************************
@@ -107,35 +105,35 @@ int Bayonet_EXTI_Interrupt_Init(GPIO_TypeDef* GPIOx, uint8_t Pinx, Bayonet_EXTI_
 	*
 	*	for EXTI line 0-4:
 	*
-	*	void EXTI<Line Index>_IRQHandler()
-	*	{
-	*		if(EXTI->PR & (1 << <Line Index>))
-	*		{
-	*			//Your code here. 
-	*			EXTI->PR |= 1 << <Line Index>;
-	*		}
-	*	}
-	*
+		void EXTI<Line Index>_IRQHandler()
+		{
+			if(EXTI->PR & (1 << <Line Index>))
+			{
+				//Your code here. 
+				EXTI->PR |= 1 << <Line Index>;
+			}
+		}
+	****************************************************
 	*	for EXTI line 5-9:
 	*
-	*	void EXTI9_5_IRQHanlder()
-	*	{
-	*		if(EXTI->PR & (1 << <Line Index>))
-	*		{
-	*			//Your code here. 
-	*			EXTI->PR |= 1 << <Line Index>;
-	*		}
-	*	}
-	*
+		void EXTI9_5_IRQHanlder()
+		{
+			if(EXTI->PR & (1 << <Line Index>))
+			{
+				//Your code here. 
+				EXTI->PR |= 1 << <Line Index>;
+			}
+		}
+	****************************************************
 	*	for EXTI line 10-15:
 	*
-	*	void EXTI15_10_IRQHandler()
-	*	{
-	*		if(EXTI->PR & (1 << <Line Index>))
-	*		{
-	*			//Your code here. 
-	*			EXTI->PR |= 1 << <Line Index>;
-	*		}
-	*	}
+		void EXTI15_10_IRQHandler()
+		{
+			if(EXTI->PR & (1 << <Line Index>))
+			{
+				//Your code here. 
+				EXTI->PR |= 1 << <Line Index>;
+			}
+		}
 	*
 ******************************************************/

@@ -32,18 +32,55 @@
 	********************************************************************************
 	*/
 	
-#ifndef __BAYONET_EXTI_H
-#define __BAYONET_EXTI_H
+#ifndef __BAYONET_DAC_H
+#define __BAYONET_DAC_H
 
 #include "stm32f10x.h"
+#include <stdbool.h>
 
-typedef enum
-{
-	Bayonet_EXTI_TRIGGER_RISING,
-	Bayonet_EXTI_TRIGGER_FALLING,
-	Bayonet_EXTI_TRIGGER_BOTH
-}Bayonet_EXTI_TRIGGER;
+typedef enum{
+	Bayonet_DAC_CHANNEL1,
+	Bayonet_DAC_CHANNEL2
+}Bayonet_DAC_CHANNEL;
 
-void Bayonet_EXTI_Interrupt_Init(GPIO_TypeDef* GPIOx, uint8_t Pinx, Bayonet_EXTI_TRIGGER trigger, uint8_t PrePriority, uint8_t SubPriority);
+typedef enum{
+	Bayonet_DAC_DATA_WIDTH12,
+	Bayonet_DAC_DATA_WIDTH8
+}Bayonet_DAC_DATA_WIDTH;
+
+typedef enum{
+	Bayonet_DAC_AMPLITUDE_1,
+	Bayonet_DAC_AMPLITUDE_3,
+	Bayonet_DAC_AMPLITUDE_7,
+	Bayonet_DAC_AMPLITUDE_15,
+	Bayonet_DAC_AMPLITUDE_31,
+	Bayonet_DAC_AMPLITUDE_63,
+	Bayonet_DAC_AMPLITUDE_127,
+	Bayonet_DAC_AMPLITUDE_255,
+	Bayonet_DAC_AMPLITUDE_511,
+	Bayonet_DAC_AMPLITUDE_1023,
+	Bayonet_DAC_AMPLITUDE_2047,
+	Bayonet_DAC_AMPLITUDE_4095
+}Bayonet_DAC_AMPLITUDE;
+
+typedef enum{
+	Bayonet_DAC_TRIGGER_TIM6,
+#ifdef STM32F10X_CL
+	Bayonet_DAC_TRIGGER_TIM3,
+#else
+	Bayonet_DAC_TRIGGER_TIM8,
+#endif
+	Bayonet_DAC_TRIGGER_TIM7,
+	Bayonet_DAC_TRIGGER_TIM5,
+	Bayonet_DAC_TRIGGER_TIM2,
+	Bayonet_DAC_TRIGGER_TIM4,
+	Bayonet_DAC_TRIGGER_EXTI9,
+	Bayonet_DAC_TRIGGER_SOFT
+}Bayonet_DAC_TRIGGER;
+
+void Bayonet_DAC_Init_WithoutWave(Bayonet_DAC_CHANNEL channeln, uint16_t initValue);
+void Bayonet_DAC_Init_NoiseGeneration(Bayonet_DAC_CHANNEL channeln, uint16_t offset, Bayonet_DAC_AMPLITUDE amplitude, Bayonet_DAC_TRIGGER trigger);
+void Bayonet_DAC_Init_TriangleGeneration(Bayonet_DAC_CHANNEL channeln, uint16_t offset, Bayonet_DAC_AMPLITUDE amplitude, Bayonet_DAC_TRIGGER trigger);
+void Bayonet_DAC_SetOuputLevel(Bayonet_DAC_CHANNEL channeln, uint16_t value);
 
 #endif

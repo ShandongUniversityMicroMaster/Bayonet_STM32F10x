@@ -47,7 +47,7 @@
   * @param  mode: timer working mode. 
   * @retval 0 for success. 
   */
-uint32_t Bayonet_TIM_CLOCK_IO_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, Bayonet_TIM_MODE Mode)
+uint32_t Bayonet_TIM_Clock_IO_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, Bayonet_TIM_MODE Mode)
 {
 	GPIO_TypeDef *port;
 	uint8_t pin;
@@ -178,17 +178,18 @@ uint32_t Bayonet_TIM_CLOCK_IO_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, B
   * @param  subPriority: SubPriority. 
   * @retval 0 for success. 
   */
-uint8_t Bayonet_TIM_INT_Init(TIM_TypeDef *TIMx, uint32_t microseconds, uint8_t prePriority, uint8_t subPriority)
+uint8_t Bayonet_TIM_Init_Interrupt(TIM_TypeDef *TIMx, uint32_t microseconds, uint8_t prePriority, uint8_t subPriority)
 {
 	RCC_ClocksTypeDef Clock_Structure;
 	Bayonet_RCC_GetClocksFreq(&Clock_Structure);
-	Bayonet_TIM_CLOCK_IO_Init(TIMx, Bayonet_TIM_CH0, Bayonet_TIM_MODE_INT); //Dummy channel. 
+	Bayonet_TIM_Clock_IO_Init(TIMx, Bayonet_TIM_CH0, Bayonet_TIM_MODE_INT); //Dummy channel. 
 	
 	TIMx->PSC = Clock_Structure.SYSCLK_Frequency / 1000000 - 1;		//Prescale time count to 1 microsecond. Timer counts SYS_CLOCK. 
 	TIMx->ARR = microseconds;
 	TIMx->DIER |= TIM_DIER_UIE;
 	TIMx->CR1 |= TIM_CR1_CEN;
 	Bayonet_NVIC_Init(Bayonet_NVIC_GetIRQChannel_TIM(TIMx, Bayonet_TIM_MODE_INT), prePriority, subPriority);
+	TIMx->CR2 |= TIM_CR2_MMS_1;
 	
 	return 0;
 }
@@ -200,12 +201,12 @@ uint8_t Bayonet_TIM_INT_Init(TIM_TypeDef *TIMx, uint32_t microseconds, uint8_t p
   * @param  cycleTime: time of the PWM cycle, in microseconds. 
   * @retval 0 for success. 
   */
-uint8_t Bayonet_TIM_PWM_Channel_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uint32_t cycleTime)
+uint8_t Bayonet_TIM_Init_PWMChannel(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uint32_t cycleTime)
 {
 	RCC_ClocksTypeDef Clock_Structure;
 	uint32_t preScaler = 0;
 	Bayonet_RCC_GetClocksFreq(&Clock_Structure);
-	Bayonet_TIM_CLOCK_IO_Init(TIMx, CHx, Bayonet_TIM_MODE_PWM);
+	Bayonet_TIM_Clock_IO_Init(TIMx, CHx, Bayonet_TIM_MODE_PWM);
 	
 	if(cycleTime < 1000000)
 	{
