@@ -114,8 +114,16 @@ void Bayonet_GPIO_Init(GPIO_TypeDef *GPIOx, uint8_t Pinx, Bayonet_GPIO_Mode Mode
 		RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
 	else if(GPIOx == GPIOD)
 		RCC->APB2ENR |= RCC_APB2ENR_IOPDEN;
+#if !defined (STM32F10X_LD) && !defined (STM32F10X_LD_VL)	
 	else if(GPIOx == GPIOE)
 		RCC->APB2ENR |= RCC_APB2ENR_IOPEEN;
+#endif
+#if defined (STM32F10X_HD) || defined (STM32F10X_XL)
+	else if(GPIOx == GPIOF)
+		RCC->APB2ENR |= RCC_APB2ENR_IOPFEN;
+	else if(GPIOx == GPIOG)
+		RCC->APB2ENR |= RCC_APB2ENR_IOPGEN;
+#endif
 	else
 		AssertFailed("Port not exist. ", __FILE__, __LINE__);
 	
