@@ -5,8 +5,10 @@
 
 #if defined (STM32F10X_HD) || defined (STM32F10X_XL)
 
+bool Bayonet_FSMC_isInit[7] = {false};
+
 //FSMC_A[25..0]
-Bayonet_GPIO_Pin addressPins[26] = {
+const Bayonet_GPIO_Pin addressPins[26] = {
 	{GPIOF,  0},					//0
 	{GPIOF,  1},					//1
 	{GPIOF,  2},					//2
@@ -94,6 +96,11 @@ void Bayonet_FSMC_RAM_NOR_Clock_IO_Init(	Bayonet_FSMC_DATA_LINE_WIDTH dataLineWi
 																					uint8_t bankNumber, 
 																					Bayonet_FSMC_TIMING_NORSRAM_PARAMETER* timingParameter)
 {
+	if(Bayonet_FSMC_isInit[bankNumber])
+		AssertFailed("Memory bank has already been using. ", __FILE__, __LINE__);
+	else
+		Bayonet_FSMC_isInit[bankNumber] = true;
+	
 	Bayonet_FSMC_Clock_IO_Init(dataLineWidth, addressLineStart, addressLineWidth);
 	
 	switch(bankNumber)
@@ -179,11 +186,30 @@ void Bayonet_FSMC_Init_NOR(	Bayonet_FSMC_DATA_LINE_WIDTH dataLineWidth,
 	FSMC_Bank1->BTCR[bankNumber * 2] |= FSMC_BCR1_MBKEN; 
 }
 
+/**
+  * @brief  Initializing FSMC bank 1 to NAND flash control mode. 
+  * @param  dataLineWidth: 8 bits or 16 bits. 
+  * @param  addressLineStart: start index of the address bus. 
+  * @param  addressLineWidth: width of the address bus. 
+  * @param  bankNumber: 0..1 for this mode. 
+  * @param  timingParametersCommon: common timing parameters for manipulating NAND flash. 
+  * @param  timingParametersAttribute: attribute timing parameters for manipulating NAND flash. 
+  * @retval None. 
+  */
 void Bayonet_FSMC_Init_NAND(	Bayonet_FSMC_DATA_LINE_WIDTH dataLineWidth,
 															uint8_t addressLineStart,
 															uint8_t addressLineWidth,
-															uint8_t bankNumber)
+															uint8_t bankNumber,
+															Bayonet_FSMC_TIMING_NAND_PCCARD_PARAMETER* timingParametersCommon, 
+															Bayonet_FSMC_TIMING_NAND_PCCARD_PARAMETER* timingParametersAttribute)
 {
+	uint32_t tempPCR, tempPCRN, tempMEM, tempATT;
+	
+	if(Bayonet_FSMC_isInit[bankNumber + 4])
+		AssertFailed("Memory bank has already been using. ", __FILE__, __LINE__);
+	else
+		(Bayonet_FSMC_isInit[bankNumber + 4] = true);
+	
 	Bayonet_FSMC_Clock_IO_Init(dataLineWidth, addressLineStart, addressLineWidth);
 	
 	if(bankNumber == 0)
@@ -197,35 +223,204 @@ void Bayonet_FSMC_Init_NAND(	Bayonet_FSMC_DATA_LINE_WIDTH dataLineWidth,
 		Bayonet_GPIO_Init(GPIOG, 7, Bayonet_GPIO_MODE_GPIU);			//INT3
 	}
 	else
-		AssertFailed("bankNumber error. ", __FILE__, __LINE__);
-		
+		AssertFailed("Bank number exceeds. ", __FILE__, __LINE__);
+	
 	Bayonet_GPIO_Init(GPIOD, 6, Bayonet_GPIO_MODE_GPIU);				//NWAIT
 	
+	tempPCRN = FSMC_PCR2_PWID;
+	tempPCR = FSMC_PCR2_PWAITEN | FSMC_PCR2_ECCEN | FSMC_PCR2_ECCPS_1 | FSMC_PCR2_ECCPS_0;
+	
+	tempMEM = timingParametersCommon->HiZSetupTime << 24 | 
+						timingParametersCommon->HoldSetupTime << 16 | 
+						timingParametersCommon->WaitSetupTime << 8 |
+						timingParametersCommon->SetupTime;
+	
+	tempATT = timingParametersAttribute->HiZSetupTime << 24 |
+						timingParametersAttribute->HoldSetupTime << 16 |
+						timingParametersAttribute->WaitSetupTime << 8 |
+						timingParametersAttribute->SetupTime;
+	
+	if(bankNumber == 0)
+	{
+		FSMC_Bank2->PCR2 &=~ tempPCRN;
+		FSMC_Bank2->PCR2 |= tempPCR;
+		FSMC_Bank2->PMEM2 = tempMEM;
+		FSMC_Bank2->PATT2 = tempATT;
+		
+		FSMC_Bank2->PCR2 |= FSMC_PCR2_PBKEN;
+	}
+	else
+	{
+		FSMC_Bank3->PCR3 &=~ tempPCR;
+		FSMC_Bank3->PCR3 |= tempPCR;
+		FSMC_Bank3->PMEM3 = tempMEM;
+		FSMC_Bank3->PATT3 = tempATT;
+		
+		FSMC_Bank3->PCR3 |= FSMC_PCR3_PBKEN;
+	}
+}
+
+#ifdef Bayonet_Assert
+//These code is to check if the address is valid in case of hardfault. 
+uint32_t Bayonet_FSMC_Address[] = {	
+	0x60000000,
+	0x64000000,
+	0x68000000,
+	0x6C000000,
+	0x70000000,
+	0x80000000,
+	0x90000000
+};
+
+/**
+  * @brief  Check if the address using is legal. 
+  * @param  address: the address you are using. 
+  * @retval None. 
+  */
+void Bayonet_FSMC_CheckAddressValid(uint32_t address)
+{
+	uint8_t i;
+	if(address < Bayonet_FSMC_Address[0] || address > Bayonet_FSMC_Address[6])
+		AssertFailed("Address illeagle, which is not in FSMC manipulation range. ", __FILE__, __LINE__);
+	
+	for(i = 0; i < 6; i++)
+	{
+		if(address > Bayonet_FSMC_Address[i] && address < Bayonet_FSMC_Address[i + 1])
+		{
+			if(!Bayonet_FSMC_isInit[i])
+				AssertFailed("Memory bank you are reading/writing has not been initilized. ", __FILE__, __LINE__);
+		}
+	}
+}
+#endif
+
+/**
+  * @brief  Write a byte data to address through FSMC. 
+  * @param  address: address to write. 
+  * @param  data: data to write. 
+  * @retval None. 
+  */
+void Bayonet_FSMC_WriteByte(uint32_t address, uint8_t data)
+{
+#ifdef Bayonet_Assert
+	Bayonet_FSMC_CheckAddressValid(address);
+#endif
+	*(__IO uint8_t *)address = data;
 }
 
 /**
-  * @brief  Write a half word data to address through FSMC. 
-  * @param  dataLineWidth: 8 bits or 16 bits. 
-  * @param  addressLineStart: start index of the address bus. 
+  * @brief  Read a byte data from address through FSMC. 
+  * @param  address: address to read. 
+  * @retval data read. 
+  */
+uint8_t Bayonet_FSMC_ReadByte(uint32_t address)
+{
+#ifdef Bayonet_Assert
+	Bayonet_FSMC_CheckAddressValid(address);
+#endif
+	return *(__IO uint8_t *)address;
+}
+
+/**
+  * @brief  Write a halfword data to address through FSMC. 
+  * @param  address: address to write. 
+  * @param  data: data to write. 
   * @retval None. 
   */
 void Bayonet_FSMC_WriteHalfWord(uint32_t address, uint16_t data)
 {
-	*(uint16_t *) address = data;
+#ifdef Bayonet_Assert
+	Bayonet_FSMC_CheckAddressValid(address);
+#endif
+	*(__IO uint16_t *) address = data;
 }
 
-void Bayonet_FSMC_WriteFromBuffer(uint16_t* pBuffer, uint32_t addressStart, uint16_t length)
+/**
+  * @brief  Read a halfword data from address through FSMC. 
+  * @param  address: address to read. 
+  * @retval data read. 
+  */
+uint16_t Bayonet_FSMC_ReadHalfWord(uint32_t address, uint16_t data)
+{
+#ifdef Bayonet_Assert
+	Bayonet_FSMC_CheckAddressValid(address);
+#endif
+	return *(__IO uint16_t *) address;
+}
+
+/**
+  * @brief  Write buffer of halfword data to address through FSMC. 
+  * @param  pBuffer: buffer to write. 
+  * @param  addressStart: the start address to write. 
+  * @param  length: number of data to write. 
+  * @retval None. 
+  */
+void Bayonet_FSMC_WriteHalfwordsFromBuffer(uint16_t* pBuffer, uint32_t addressStart, uint16_t length)
 {
 	uint16_t i;
 	for(i = 0; i < length * 2; i+=2)
-		*(uint16_t *) (addressStart + i) = *pBuffer++;
+	{
+#ifdef Bayonet_Assert
+		Bayonet_FSMC_CheckAddressValid(addressStart + i);
+#endif
+		*(__IO uint16_t *) (addressStart + i) = *(pBuffer + i);
+	}
 }
 
-void Bayonet_FSMC_ReadToBuffer(uint16_t* pBuffer, uint32_t addressStart, uint16_t length)
+/**
+  * @brief  Consecutively read halfword data from address to a buffer through FSMC. 
+  * @param  pBuffer: buffer to store data. 
+  * @param  addressStart: the start address to read. 
+  * @param  length: number of data to read. 
+  * @retval None. 
+  */
+void Bayonet_FSMC_ReadHalfwordsToBuffer(uint16_t* pBuffer, uint32_t addressStart, uint16_t length)
 {
 	uint16_t i;
 	for(i = 0; i < length * 2; i+=2)
-		*pBuffer++ = *(uint16_t *) (addressStart + i);
+	{
+#ifdef Bayonet_Assert
+		Bayonet_FSMC_CheckAddressValid(addressStart + i);
+#endif
+		*(pBuffer + i) = *(__IO uint16_t *) (addressStart + i);
+	}
 }
 
+/**
+  * @brief  Write buffer of byte data to address through FSMC. 
+  * @param  pBuffer: buffer to write. 
+  * @param  addressStart: the start address to write. 
+  * @param  length: number of data to write. 
+  * @retval None. 
+  */
+void Bayonet_FSMC_WriteBytesFromBuffer(uint8_t* pBuffer, uint32_t addressStart, uint16_t length)
+{
+	uint16_t i;
+	for(i = 0; i < length; i++)
+	{
+#ifdef Bayonet_Assert
+		Bayonet_FSMC_CheckAddressValid(addressStart + i);
+#endif
+		*(__IO uint8_t *) (addressStart + i) = *(pBuffer + i);
+	}
+}
+
+/**
+  * @brief  Consecutively read byte data from address to a buffer through FSMC. 
+  * @param  pBuffer: buffer to store data. 
+  * @param  addressStart: the start address to read. 
+  * @param  length: number of data to read. 
+  * @retval None. 
+  */
+void Bayonet_FSMC_ReadBytesToBuffer(uint8_t* pBuffer, uint32_t addressStart, uint16_t length)
+{
+	uint16_t i;
+	for(i = 0; i < length; i++)
+	{
+#ifdef Bayonet_Assert
+		Bayonet_FSMC_CheckAddressValid(addressStart + i);
+#endif
+		*(pBuffer + i) = *(__IO uint8_t *) (addressStart + i);
+	}
+}
 #endif
