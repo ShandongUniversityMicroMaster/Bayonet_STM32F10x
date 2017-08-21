@@ -37,26 +37,70 @@
 
 uint16_t Bayonet_FLASH_Buffer[1024] = {0};
 
+#ifdef Bayonet_Assert
+
+/**
+  * @brief  Check if the address using is legal. 
+  * @param  address: address to check. 
+  * @retval None. 
+  */
+void Bayonet_FLASH_CheckAddressValid(uint32_t address)
+{
+	if(address > 0x08000000 && address < 0x0807FFFF)
+		return;
+	
+	AssertFailed("Using address is not in the range we can utilize. ", __FILE__, __LINE__);
+}
+#endif
+
+/**
+  * @brief  Unlock the flash lock to allow write operation. 
+  * @retval None. 
+  */
 void Bayonet_FLASH_Unlock()
 {
 	FLASH->KEYR = Bayonet_FLASH_KEY1;
 	FLASH->KEYR = Bayonet_FLASH_KEY2;
 }
 
+/**
+  * @brief  Lock the flash lock to prevent from writing operation. 
+  * @retval None. 
+  */
 void Bayonet_FLASH_Lock()
 {
 	FLASH->CR |= FLASH_CR_LOCK;
 }
 
-void Bayonet_FLASH_ReadHalfWord(uint32_t address, uint16_t *buffer, uint16_t count)
+/**
+  * @brief  Read a buffer of halfword data from flash. 
+  * @param  address: address to read. 
+  * @param  buffer: pointer to the start of buffer. 
+  * @param  count: length of buffer. 
+  * @retval None. 
+  */
+void Bayonet_FLASH_ReadBuffer(uint32_t address, uint16_t *buffer, uint16_t count)
 {
 	uint16_t i;
 	for(i = 0; i < count; i++)
-		buffer[i] = *(vu16*)(address + 2 * i);
+	{
+#ifdef Bayonet_Assert
+		Bayonet_FLASH_CheckAddressValid(address + 2 * i);
+#endif
+		buffer[i] = *(__IO uint16_t*)(address + 2 * i);
+	}
 }
 
+/**
+  * @brief  Erase a flash page. 
+  * @param  pageAddress: this will erase the page which the address is within. 
+  * @retval None. 
+  */
 void Bayonet_FLASH_ErasePage(uint32_t pageAddress)
 {
+#ifdef Bayonet_Assert
+		Bayonet_FLASH_CheckAddressValid(pageAddress);
+#endif
 	while(FLASH->SR & FLASH_SR_BSY);
 	FLASH->CR |= FLASH_CR_PER;
 	FLASH->AR = pageAddress;
@@ -65,16 +109,32 @@ void Bayonet_FLASH_ErasePage(uint32_t pageAddress)
 	FLASH->CR &=~ FLASH_CR_PER;
 }
 
+/**
+  * @brief  Write a halfword data to flash. 
+  * @param  address: address to write. 
+  * @param  data: data to write. 
+  * @retval None. 
+  */
 void Bayonet_FLASH_WriteHalfWord(uint32_t address, uint16_t data)
 {
+#ifdef Bayonet_Assert
+		Bayonet_FLASH_CheckAddressValid(address);
+#endif
 	while(FLASH->SR & FLASH_SR_BSY);
 	FLASH->CR |= FLASH_CR_PG;
-	*(vu16 *)address = data;
+	*(__IO uint16_t *)address = data;
 	while(FLASH->SR & FLASH_SR_BSY);
 	FLASH->CR &=~ FLASH_CR_PG;
 }
 
-void Bayonet_FLASH_Write(uint32_t address, uint16_t *buffer, uint16_t count)
+/**
+  * @brief  Write a buffer of halfword data to flash. 
+  * @param  address: address to write. 
+  * @param  buffer: pointer to the start of buffer. 
+  * @param  count: length of buffer. 
+  * @retval None. 
+  */
+void Bayonet_FLASH_WriteBuffer(uint32_t address, uint16_t *buffer, uint16_t count)
 {
 	uint8_t isNeedErase = 0;
 	uint16_t i;
@@ -85,7 +145,7 @@ void Bayonet_FLASH_Write(uint32_t address, uint16_t *buffer, uint16_t count)
 	Bayonet_FLASH_Unlock();
 	while(1)
 	{
-		Bayonet_FLASH_ReadHalfWord(address - pageOffset, Bayonet_FLASH_Buffer, 1024);
+		Bayonet_FLASH_ReadBuffer(address - pageOffset, Bayonet_FLASH_Buffer, 1024);
 		for(i = 0;i < 1024; i ++)
 		{
 			if(Bayonet_FLASH_Buffer[i] != 0xffff)

@@ -42,7 +42,7 @@
 
 extern uint16_t Bayonet_FLASH_Buffer[1024];
 
-void Bayonet_FLASH_ReadHalfWord(uint32_t address, uint16_t *buffer, uint16_t count);
-void Bayonet_FLASH_Write(uint32_t address, uint16_t *buffer, uint16_t count);
+void Bayonet_FLASH_ReadBuffer(uint32_t address, uint16_t *buffer, uint16_t count);
+void Bayonet_FLASH_WriteBuffer(uint32_t address, uint16_t *buffer, uint16_t count);
 
 #endif
