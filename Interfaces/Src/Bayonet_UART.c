@@ -138,12 +138,14 @@ void UART_NVIC_Configuration(USART_TypeDef *USARTx, uint8_t PrePriority, uint8_t
   * @param  subPriority: subPriority for interrupt. 
   * @retval None
   */
-void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 baudrate, uint8_t prePriority, uint8_t subPriority)
+void Bayonet_UART_Init(USART_TypeDef *USARTx, uint32_t pclk2,uint32_t baudrate, uint8_t prePriority, uint8_t subPriority)
 {
 	float temp;
-	u16 mantissa;
-	u16 fraction;
-	temp = (float)(pclk2*1000000.0)/(baudrate*16.0);
+	uint16_t mantissa;
+	uint16_t fraction;
+	RCC_ClocksTypeDef Clocks;
+	Bayonet_RCC_GetClocksFreq(&Clocks);
+	temp = (float)(Clocks.PCLK2_Frequency)/(baudrate*16.0);
 	mantissa = temp;
 	fraction = (temp-mantissa)*16;
   mantissa <<= 4;

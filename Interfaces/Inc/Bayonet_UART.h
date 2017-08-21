@@ -43,7 +43,7 @@
 #define BYTE3(dwTemp)       (*((char *)(&dwTemp) + 3))
 
 void UART_NVIC_Configuration(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority);
-void Bayonet_UART_Init(USART_TypeDef *USARTx, u32 pclk2,u32 bound, uint8_t prePriority, uint8_t subPriority);
+void Bayonet_UART_Init(USART_TypeDef *USARTx, uint32_t pclk2,uint32_t bound, uint8_t prePriority, uint8_t subPriority);
 void Bayonet_UART_SendBuff(USART_TypeDef *USARTx, uint8_t *buff, uint16_t count);
 void UART_Put_Char(unsigned char DataToSend);
 uint8_t UART_Get_Char(void);
