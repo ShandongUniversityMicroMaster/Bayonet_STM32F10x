@@ -1,9 +1,9 @@
+#if defined (STM32F10X_HD) || defined (STM32F10X_XL)
+
 #include "Bayonet_FSMC.h"
 #include "Bayonet_GPIO.h"
 #include "Bayonet_RCC.h"
 #include "Bayonet_UART.h"
-
-#if defined (STM32F10X_HD) || defined (STM32F10X_XL)
 
 bool Bayonet_FSMC_isInit[7] = {false};
 
