@@ -32,6 +32,8 @@
 	********************************************************************************
 	*/
 
+#if defined (STM32F10X_HD) || defined  (STM32F10X_CL)	
+
 #include "Bayonet_DAC.h"
 #include "Bayonet_UART.h"
 #include "Bayonet_RCC.h"
@@ -127,3 +129,5 @@ void Bayonet_DAC_SetOuputLevel(Bayonet_DAC_CHANNEL channeln, uint16_t value)
 	else
 		DAC->DHR12R2 = value;
 }
+
+#endif
