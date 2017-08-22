@@ -43,10 +43,12 @@
 #define BYTE3(dwTemp)       (*((char *)(&dwTemp) + 3))
 
 void UART_NVIC_Configuration(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority);
-void Bayonet_UART_Init(USART_TypeDef *USARTx, uint32_t pclk2,uint32_t bound, uint8_t prePriority, uint8_t subPriority);
+void Bayonet_UART_Init(USART_TypeDef *USARTx, uint32_t bound);
 void Bayonet_UART_SendBuff(USART_TypeDef *USARTx, uint8_t *buff, uint16_t count);
 void UART_Put_Char(unsigned char DataToSend);
 uint8_t UART_Get_Char(void);
 void AssertFailed(char *str, char *file, int line);
 void Bayonet_UART_SendString(USART_TypeDef *USARTx, char *str);
+void Bayonet_UART_EnableReceiveNotEmptyInterrupt(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority);
+void Bayonet_UART_EnableTransmissionCompleteInterrupt(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority);
 #endif

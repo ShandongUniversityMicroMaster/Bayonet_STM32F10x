@@ -39,7 +39,7 @@
 #include "Bayonet_RCC.h"
 #include "Bayonet_Delay.h"
 
-bool bayonetUsartIsInit[5] = {false};
+bool Bayonet_UART_isInit[5] = {false};
 
 //#pragma import(__use_no_semihosting)
 struct __FILE 
@@ -134,11 +134,9 @@ void UART_NVIC_Configuration(USART_TypeDef *USARTx, uint8_t PrePriority, uint8_t
   * @brief  Initializing the specific UART. 
   * @param  USARTx: where x can be (1..6) to select the peripheral.
   * @param  baudrate: baudrate. 
-  * @param  prePriority: prePriority for interrupt. 
-  * @param  subPriority: subPriority for interrupt. 
   * @retval None
   */
-void Bayonet_UART_Init(USART_TypeDef *USARTx, uint32_t pclk2,uint32_t baudrate, uint8_t prePriority, uint8_t subPriority)
+void Bayonet_UART_Init(USART_TypeDef *USARTx, uint32_t baudrate)
 {
 	float temp;
 	uint16_t mantissa;
@@ -207,10 +205,101 @@ void Bayonet_UART_Init(USART_TypeDef *USARTx, uint32_t pclk2,uint32_t baudrate, 
 	}
 	
  	USARTx->BRR=mantissa;
-	USARTx->CR1 |= USART_CR1_UE | USART_CR1_RXNEIE | USART_CR1_TE | USART_CR1_RE;
-  UART_NVIC_Configuration(USARTx, prePriority, subPriority);
-	bayonetUsartIsInit[Bayonet_UART_GetIndex(USARTx)] = true;
+	USARTx->CR1 |= USART_CR1_UE | USART_CR1_TE | USART_CR1_RE;
+	Bayonet_UART_isInit[Bayonet_UART_GetIndex(USARTx)] = true;
 }
+
+/**
+  * @brief  Enable transmission complete interrupt of the specific UART. 
+  * @param  USARTx: where x can be (1..6) to select the peripheral.
+  * @param  prePriority: prePriority for interrupt. 
+  * @param  subPriority: subPriority for interrupt. 
+  * @retval None
+  */
+void Bayonet_UART_EnableTransmissionCompleteInterrupt(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority)
+{
+	if(!Bayonet_UART_isInit[Bayonet_UART_GetIndex(USARTx)])
+		AssertFailed("The specific UART port has not been initialized. ", __FILE__, __LINE__);
+	
+	USARTx->CR1 |= USART_CR1_TCIE;
+	UART_NVIC_Configuration(USARTx, prePriority, subPriority);
+}
+
+/*****************************************************
+	*
+	*		Interrupt Request Handler should be like below: 
+	*
+	*		<UART Index>  -->  port index of your uart. 
+	*
+	****************************************************
+	*
+	*	for USART 1-3:
+	*
+		void USART<UART_Index>_IRQHandler()
+		{
+			if(USART<UART Index>->SR & USART_SR_TC)
+			{
+				USART<UART Index>->DR = data; //Put next data to send. 
+			}
+		}
+	****************************************************
+	*	for UART 4-5:
+	*
+		void UART<UART Index>_IRQHandler()
+		{
+			if(UART<UART Index>->SR & USART_SR_TC)
+			{
+				UART<UART Index>->DR = data; //Put next data to send. 
+			}
+		}
+	*
+******************************************************/
+
+/**
+  * @brief  Enable receive register not empty interrupt of the specific UART. 
+  * @param  USARTx: where x can be (1..6) to select the peripheral.
+  * @param  prePriority: prePriority for interrupt. 
+  * @param  subPriority: subPriority for interrupt. 
+  * @retval None
+  */
+void Bayonet_UART_EnableReceiveNotEmptyInterrupt(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority)
+{
+	if(!Bayonet_UART_isInit[Bayonet_UART_GetIndex(USARTx)])
+		AssertFailed("The specific UART port has not been initialized. ", __FILE__, __LINE__);
+	
+	USARTx->CR1 |= USART_CR1_RXNEIE;
+	UART_NVIC_Configuration(USARTx, prePriority, subPriority);
+}
+
+/*****************************************************
+	*
+	*		Interrupt Request Handler should be like below: 
+	*
+	*		<UART Index>  -->  port index of your uart. 
+	*
+	****************************************************
+	*
+	*	for USART 1-3:
+	*
+		void USART<UART_Index>_IRQHandler()
+		{
+			if(USART<UART Index>->SR & USART_SR_RXNE)
+			{
+				data = USART<UART Index>->DR;; //Put next data to send. 
+			}
+		}
+	****************************************************
+	*	for UART 4-5:
+	*
+		void UART<UART Index>_IRQHandler()
+		{
+			if(UART<UART Index>->SR & USART_SR_RXNE)
+			{
+				data = UART<UART Index>->DR;; //Put next data to send. 
+			}
+		}
+	*
+******************************************************/
 
 /**
   * @brief  Sending buffer using USARTx. 
@@ -223,7 +312,7 @@ void Bayonet_UART_SendBuff(USART_TypeDef *USARTx, uint8_t *buff, uint16_t count)
 {
 	uint16_t i = 0;
 #ifdef Bayonet_Assert
-	if(!bayonetUsartIsInit[Bayonet_UART_GetIndex(USARTx)])
+	if(!Bayonet_UART_isInit[Bayonet_UART_GetIndex(USARTx)])
 		AssertFailed("Port not Initialized. ", __FILE__, __LINE__); 
 #endif
 	for(i = 0; i < count; i++)
@@ -243,7 +332,7 @@ void Bayonet_UART_SendBuff(USART_TypeDef *USARTx, uint8_t *buff, uint16_t count)
 void Bayonet_UART_SendString(USART_TypeDef *USARTx, char *str)
 {
 #ifdef Bayonet_Assert
-	if(!bayonetUsartIsInit[Bayonet_UART_GetIndex(USARTx)])
+	if(!Bayonet_UART_isInit[Bayonet_UART_GetIndex(USARTx)])
 		AssertFailed("Port not Initialized. ", __FILE__, __LINE__); 
 #endif
 	while(*str != '\0')
