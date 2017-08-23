@@ -48,29 +48,29 @@ uint16_t ADC_Buff[3][20] = {0};
   * @param  ADC_CHx: where x can be (0..15) to select the input channel.
   * @retval None
   */
-void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
+void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, Bayonet_ADC_Channel ADC_CHx)
 {
-	if(ADC_CHx == Bayonet_ADC_CH0)	//PA0
+	if(ADC_CHx == Bayonet_ADC_Channel_0)	//PA0
 	{
 		RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
 		GPIOA->CRL &=~ (GPIO_CRL_CNF0 | GPIO_CRL_MODE0);
 	}
-	if(ADC_CHx == Bayonet_ADC_CH1)	//PA1
+	if(ADC_CHx == Bayonet_ADC_Channel_1)	//PA1
 	{
 		RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
 		GPIOA->CRL &=~ (GPIO_CRL_CNF1 | GPIO_CRL_MODE1);
 	}
-	if(ADC_CHx == Bayonet_ADC_CH2)	//PA2
+	if(ADC_CHx == Bayonet_ADC_Channel_2)	//PA2
 	{
 		RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
 		GPIOA->CRL &=~ (GPIO_CRL_CNF2 | GPIO_CRL_MODE2);
 	}
-	if(ADC_CHx == Bayonet_ADC_CH3)	//PA3
+	if(ADC_CHx == Bayonet_ADC_Channel_3)	//PA3
 	{
 		RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
 		GPIOA->CRL &=~ (GPIO_CRL_CNF3 | GPIO_CRL_MODE3);
 	}
-	if(ADC_CHx == Bayonet_ADC_CH4)
+	if(ADC_CHx == Bayonet_ADC_Channel_4)
 	{
 #if !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_HD_VL)
 		if(ADCx == ADC1 || ADCx == ADC2) //PA4
@@ -89,7 +89,7 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 		}
 #endif
 	}
-	if(ADC_CHx == Bayonet_ADC_CH5)
+	if(ADC_CHx == Bayonet_ADC_Channel_5)
 	{
 #if !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_HD_VL)
 		if(ADCx == ADC1 || ADCx == ADC2) //PA5
@@ -108,7 +108,7 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 		}
 #endif
 	}
-	if(ADC_CHx == Bayonet_ADC_CH6)
+	if(ADC_CHx == Bayonet_ADC_Channel_6)
 	{
 #if !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_HD_VL)
 		if(ADCx == ADC1 || ADCx == ADC2) //PA6
@@ -127,7 +127,7 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 		}
 #endif
 	}
-	if(ADC_CHx == Bayonet_ADC_CH7)
+	if(ADC_CHx == Bayonet_ADC_Channel_7)
 	{
 #if !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_HD_VL)
 		if(ADCx == ADC1 || ADCx == ADC2) //PA7
@@ -146,7 +146,7 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 		}
 #endif
 	}
-	if(ADC_CHx == Bayonet_ADC_CH8)
+	if(ADC_CHx == Bayonet_ADC_Channel_8)
 	{
 #if !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_HD_VL)
 		if(ADCx == ADC1 || ADCx == ADC2) //PB0
@@ -165,7 +165,7 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 		}
 #endif
 	}
-	if(ADC_CHx == Bayonet_ADC_CH9)
+	if(ADC_CHx == Bayonet_ADC_Channel_9)
 	{
 #if !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_HD_VL)
 		if(ADCx == ADC1 || ADCx == ADC2) //PB1
@@ -179,27 +179,27 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 		else
 			AssertFailed("...", __FILE__, __LINE__);
 	}
-	if(ADC_CHx == Bayonet_ADC_CH10)	//PC0
+	if(ADC_CHx == Bayonet_ADC_Channel_10)	//PC0
 	{
 		RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
 		GPIOA->CRL &=~ (GPIO_CRL_CNF0 | GPIO_CRL_MODE0);
 	}
-	if(ADC_CHx == Bayonet_ADC_CH11)	//PC1
+	if(ADC_CHx == Bayonet_ADC_Channel_11)	//PC1
 	{
 		RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
 		GPIOA->CRL &=~ (GPIO_CRL_CNF1 | GPIO_CRL_MODE1);
 	}
-	if(ADC_CHx == Bayonet_ADC_CH12)	//PC2
+	if(ADC_CHx == Bayonet_ADC_Channel_12)	//PC2
 	{
 		RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
 		GPIOC->CRL &=~ (GPIO_CRL_CNF2 | GPIO_CRL_MODE2);
 	}
-	if(ADC_CHx == Bayonet_ADC_CH13)	//PC3
+	if(ADC_CHx == Bayonet_ADC_Channel_13)	//PC3
 	{
 		RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
 		GPIOC->CRL &=~ (GPIO_CRL_CNF3 | GPIO_CRL_MODE3);
 	}
-	if(ADC_CHx == Bayonet_ADC_CH14)	//PC4
+	if(ADC_CHx == Bayonet_ADC_Channel_14)	//PC4
 	{
 #if !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_HD_VL)
 		if(ADCx == ADC1 || ADCx == ADC2)
@@ -213,7 +213,7 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
 		else
 			AssertFailed("Channel not exist...", __FILE__, __LINE__);
 	}
-	if(ADC_CHx == Bayonet_ADC_CH15)	//PC5
+	if(ADC_CHx == Bayonet_ADC_Channel_15)	//PC5
 	{
 #if !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_HD_VL)
 		if(ADCx == ADC1 || ADCx == ADC2) //PA4
@@ -268,7 +268,7 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
   * @param  ADC_CHx: where x can be (0..15) to select the input channel.
   * @retval None
   */
-void Bayonet_ADC_Init_OneTimeConversion(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
+void Bayonet_ADC_Init_OneTimeConversion(ADC_TypeDef *ADCx, Bayonet_ADC_Channel ADC_CHx)
 {
 	Bayonet_ADC_CLOCK_IO_Init(ADCx, ADC_CHx);
 	
@@ -296,7 +296,7 @@ void Bayonet_ADC_Init_OneTimeConversion(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
   * @param  ADC_CHxs: the buffer that regular sequence stores in.
   * @retval None
   */
-void Bayonet_ADC_SetRegularSequence(ADC_TypeDef *ADCx, uint8_t Length, uint32_t ADC_CHxs[])
+void Bayonet_ADC_SetRegularSequence(ADC_TypeDef *ADCx, uint8_t Length, Bayonet_ADC_Channel ADC_CHxs[])
 {
 	uint8_t i = 0;
 	uint8_t count[3] = {0};
@@ -329,7 +329,7 @@ void Bayonet_ADC_SetRegularSequence(ADC_TypeDef *ADCx, uint8_t Length, uint32_t 
   * @param  SampleTime: Sample time for all regular channels.
   * @retval None
   */
-void Bayonet_ADC_Init_ContinuousConversion(ADC_TypeDef *ADCx, uint8_t SequenceLength, uint32_t ADC_CHxs[], uint32_t SampleTime)
+void Bayonet_ADC_Init_ContinuousConversion(ADC_TypeDef *ADCx, uint8_t SequenceLength, Bayonet_ADC_Channel ADC_CHxs[], Bayonet_ADC_SampleTime SampleTime)
 {
 	uint8_t i;
 	
@@ -349,10 +349,10 @@ void Bayonet_ADC_Init_ContinuousConversion(ADC_TypeDef *ADCx, uint8_t SequenceLe
 	for(i = 0;i < SequenceLength; i++)
 	{
 		Bayonet_ADC_CLOCK_IO_Init(ADCx, ADC_CHxs[i]);
-		if(ADC_CHxs[i] < Bayonet_ADC_CH10)
+		if(ADC_CHxs[i] < Bayonet_ADC_Channel_10)
 			ADCx->SMPR2 |= SampleTime << (3*ADC_CHxs[i]);
 		else
-			ADCx->SMPR1 |= SampleTime << (3*(ADC_CHxs[i] - Bayonet_ADC_CH10));
+			ADCx->SMPR1 |= SampleTime << (3*(ADC_CHxs[i] - Bayonet_ADC_Channel_10));
 	}
 	
 	ADCx->CR1 &=~ ADC_CR1_DUALMOD;
@@ -429,10 +429,10 @@ void Bayonet_ADC_EnableInterrupt_EOC(ADC_TypeDef *ADCx, uint8_t prePriority, uin
   * @param  ADC_CHx: where x can be (0..15) to select the input channel. 
   * @retval The ADC value of channel ADC_CHx of ADCx peripheral. 
   */
-u16 Bayonet_ADC_OneTime(ADC_TypeDef *ADCx, uint32_t ADC_CHx)
+u16 Bayonet_ADC_OneTime(ADC_TypeDef *ADCx, Bayonet_ADC_Channel ADC_CHx)
 {
 #ifdef BAYONET_ADC_ASSERT
-	if(ADC_CHx > Bayonet_ADC_CH15)
+	if(ADC_CHx > Bayonet_ADC_Channel_15)
 		AssertFailed("ADC Channel not exist...", __FILE__, __LINE__);
 	if(ADCx == ADC1)
 	{

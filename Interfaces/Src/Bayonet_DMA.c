@@ -74,7 +74,7 @@ void Bayonet_DMA_CLOCK_IO_Init(DMA_TypeDef *DMAx, DMA_Channel_TypeDef *CHx, uint
   * @param  MemoryDataWidth: data width of memory.
   * @retval None
   */
-void Bayonet_DMA_SetDataWidth(DMA_Channel_TypeDef *CHx, uint8_t PeripheralDataWidth, uint8_t MemoryDataWidth)
+void Bayonet_DMA_SetDataWidth(DMA_Channel_TypeDef *CHx, Bayonet_DMA_DataWidth PeripheralDataWidth, uint8_t MemoryDataWidth)
 {
 	if(PeripheralDataWidth == Bayonet_DMA_DataWidth_8bit)
 		CHx->CCR &=~ DMA_CCR1_PSIZE;
@@ -105,7 +105,7 @@ void Bayonet_DMA_SetDataWidth(DMA_Channel_TypeDef *CHx, uint8_t PeripheralDataWi
   * @param  DataLength: time that DMA transfers.
   * @retval None
   */
-void Bayonet_DMA_P2M_Init(DMA_TypeDef *DMAx, DMA_Channel_TypeDef *CHx, uint32_t PeripheralAdress, uint32_t MemoryAdress, uint8_t DataWidth, uint16_t DataLength)
+void Bayonet_DMA_P2M_Init(DMA_TypeDef *DMAx, DMA_Channel_TypeDef *CHx, uint32_t PeripheralAdress, uint32_t MemoryAdress, Bayonet_DMA_DataWidth DataWidth, uint16_t DataLength)
 {
 	Bayonet_DMA_CLOCK_IO_Init(DMAx, CHx, PeripheralAdress, MemoryAdress, DataLength);
 	CHx->CCR &=~ DMA_CCR1_DIR;			//Read from peripheral.
@@ -131,7 +131,7 @@ void Bayonet_DMA_P2M_Init(DMA_TypeDef *DMAx, DMA_Channel_TypeDef *CHx, uint32_t 
   * @param  DataLength: time that DMA transfers.
   * @retval None
   */
-void Bayonet_DMA_M2P_Init(DMA_TypeDef *DMAx, DMA_Channel_TypeDef *CHx, uint32_t PeripheralAdress, uint32_t MemoryAdress, uint8_t DataWidth, uint16_t DataLength)
+void Bayonet_DMA_M2P_Init(DMA_TypeDef *DMAx, DMA_Channel_TypeDef *CHx, uint32_t PeripheralAdress, uint32_t MemoryAdress, Bayonet_DMA_DataWidth DataWidth, uint16_t DataLength)
 {
 	Bayonet_DMA_CLOCK_IO_Init(DMAx, CHx, PeripheralAdress, MemoryAdress, DataLength);
 	CHx->CCR |= DMA_CCR1_DIR;			//Read from memory.
@@ -156,7 +156,7 @@ void Bayonet_DMA_M2P_Init(DMA_TypeDef *DMAx, DMA_Channel_TypeDef *CHx, uint32_t 
   * @param  DataLength: time that DMA transfers.
   * @retval None
   */
-void Bayonet_DMA_M2M_Start(DMA_TypeDef *DMAx, DMA_Channel_TypeDef *CHx, uint32_t SourceAdress, uint32_t DestinationAdress, uint8_t SourceDataWidth,uint8_t DestinationDataWidth, uint16_t DataLength)
+void Bayonet_DMA_M2M_Start(DMA_TypeDef *DMAx, DMA_Channel_TypeDef *CHx, uint32_t SourceAdress, uint32_t DestinationAdress, Bayonet_DMA_DataWidth SourceDataWidth, Bayonet_DMA_DataWidth DestinationDataWidth, uint16_t DataLength)
 {
 	Bayonet_DMA_CLOCK_IO_Init(DMAx, CHx, SourceAdress, DestinationAdress, DataLength);
 	CHx->CCR &=~ DMA_CCR1_DIR; //Read from peripheral, which in this case, is SourceAdress.
