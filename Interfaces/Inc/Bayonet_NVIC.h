@@ -42,11 +42,12 @@
 #define AIRCR_VECTKEY_MASK    ((uint32_t)0x05FA0000)
 
 typedef enum{
-	Bayonet_NVIC_PriorityGroup_0 = ((uint32_t)0x700),
-	Bayonet_NVIC_PriorityGroup_1 = ((uint32_t)0x600),
-	Bayonet_NVIC_PriorityGroup_2 = ((uint32_t)0x500),
-	Bayonet_NVIC_PriorityGroup_3 = ((uint32_t)0x400),
-	Bayonet_NVIC_PriorityGroup_4 = ((uint32_t)0x300)
+	Bayonet_NVIC_PriorityGroup_None = 0x0000,
+	Bayonet_NVIC_PriorityGroup_0 		= 0x0700,
+	Bayonet_NVIC_PriorityGroup_1 		= 0x0600,
+	Bayonet_NVIC_PriorityGroup_2 		= 0x0500,
+	Bayonet_NVIC_PriorityGroup_3 		= 0x0400,
+	Bayonet_NVIC_PriorityGroup_4 		= 0x0300
 }Bayonet_NVIC_PriorityGroup;
 
 void Bayonet_NVIC_SetGroup(Bayonet_NVIC_PriorityGroup NVIC_PriorityGroup);

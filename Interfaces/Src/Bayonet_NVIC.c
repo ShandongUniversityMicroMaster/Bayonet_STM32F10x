@@ -35,7 +35,20 @@
 #include "Bayonet_NVIC.h"
 #include "Bayonet_UART.h"
 
-uint8_t isGrouped = 0;
+Bayonet_NVIC_PriorityGroup Bayonet_NVIC_groupNumber = Bayonet_NVIC_PriorityGroup_None;
+
+/**
+  * @brief  Translate group number to index, 1, 2, 4, 8, 16. 
+  * @param  NVIC_PriorityGroup: such as the name. 
+  * @retval None
+  */
+uint8_t Bayonet_NVIC_GetGroupIndex(Bayonet_NVIC_PriorityGroup group)
+{
+	if(group == Bayonet_NVIC_PriorityGroup_0)
+		return 1;
+	else
+		return (4 - ((group >> 8) - 3));
+}
 
 /**
   * @brief  Configures priority group of NVIC. 
@@ -45,7 +58,7 @@ uint8_t isGrouped = 0;
 void Bayonet_NVIC_SetGroup(Bayonet_NVIC_PriorityGroup NVIC_PriorityGroup)
 {
   SCB->AIRCR = AIRCR_VECTKEY_MASK | NVIC_PriorityGroup;
-	isGrouped = 1;
+	Bayonet_NVIC_groupNumber = NVIC_PriorityGroup;
 }
 
 /**
@@ -241,9 +254,17 @@ uint8_t Bayonet_NVIC_GetIRQChannel_EXTI(uint8_t Pinx)
   */
 void Bayonet_NVIC_Init(uint8_t IRQChannel, uint8_t PrePriority, uint8_t SubPriority)
 {
-	if(isGrouped)
+	uint8_t tempMax;
+	uint32_t tmppriority = 0x00, tmppre = 0x00, tmpsub = 0x0F;
+	if(Bayonet_NVIC_groupNumber != Bayonet_NVIC_PriorityGroup_None)
 	{
-		uint32_t tmppriority = 0x00, tmppre = 0x00, tmpsub = 0x0F;
+		tempMax = (1 << Bayonet_NVIC_GetGroupIndex(Bayonet_NVIC_groupNumber));
+		if(PrePriority >= tempMax)
+			AssertFailed("prePriority exceeds. ", __FILE__, __LINE__);
+		tempMax = (1 << (4 - Bayonet_NVIC_GetGroupIndex(Bayonet_NVIC_groupNumber)));
+		if(SubPriority >= tempMax)
+			AssertFailed("subPriority exceeds. ", __FILE__, __LINE__);
+		
 		/* Compute the Corresponding IRQ Priority --------------------------------*/    
 		tmppriority = (0x700 - ((SCB->AIRCR) & (uint32_t)0x700))>> 0x08;
 		tmppre = (0x4 - tmppriority);
