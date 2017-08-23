@@ -51,6 +51,7 @@ typedef enum{
 
 void Bayonet_NVIC_SetGroup(Bayonet_NVIC_PriorityGroup NVIC_PriorityGroup);
 void Bayonet_NVIC_Init(uint8_t IRQChannel, uint8_t PrePriority, uint8_t SubPriority);
+uint8_t Bayonet_NVIC_GetIRQChannel_ADC(ADC_TypeDef* ADCx);
 uint8_t Bayonet_NVIC_GetIRQChannel_TIM(TIM_TypeDef *TIMx, Bayonet_TIM_MODE mode);
 uint8_t Bayonet_NVIC_GetIRQChannel_DMA(DMA_Channel_TypeDef *CHx);
 uint8_t Bayonet_NVIC_GetIRQChannel_SPI(SPI_TypeDef *SPIx);

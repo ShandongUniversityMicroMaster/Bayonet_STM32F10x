@@ -216,7 +216,7 @@ void Bayonet_UART_Init(USART_TypeDef *USARTx, uint32_t baudrate)
   * @param  subPriority: subPriority for interrupt. 
   * @retval None
   */
-void Bayonet_UART_EnableTransmissionCompleteInterrupt(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority)
+void Bayonet_UART_EnableInterrupt_TC(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority)
 {
 	if(!Bayonet_UART_isInit[Bayonet_UART_GetIndex(USARTx)])
 		AssertFailed("The specific UART port has not been initialized. ", __FILE__, __LINE__);
@@ -239,6 +239,7 @@ void Bayonet_UART_EnableTransmissionCompleteInterrupt(USART_TypeDef *USARTx, uin
 		{
 			if(USART<UART Index>->SR & USART_SR_TC)
 			{
+				//Your code. 
 				USART<UART Index>->DR = data; //Put next data to send. 
 			}
 		}
@@ -249,6 +250,7 @@ void Bayonet_UART_EnableTransmissionCompleteInterrupt(USART_TypeDef *USARTx, uin
 		{
 			if(UART<UART Index>->SR & USART_SR_TC)
 			{
+				//Your code. 
 				UART<UART Index>->DR = data; //Put next data to send. 
 			}
 		}
@@ -262,7 +264,7 @@ void Bayonet_UART_EnableTransmissionCompleteInterrupt(USART_TypeDef *USARTx, uin
   * @param  subPriority: subPriority for interrupt. 
   * @retval None
   */
-void Bayonet_UART_EnableReceiveNotEmptyInterrupt(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority)
+void Bayonet_UART_EnableInterrupt_RXNE(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority)
 {
 	if(!Bayonet_UART_isInit[Bayonet_UART_GetIndex(USARTx)])
 		AssertFailed("The specific UART port has not been initialized. ", __FILE__, __LINE__);

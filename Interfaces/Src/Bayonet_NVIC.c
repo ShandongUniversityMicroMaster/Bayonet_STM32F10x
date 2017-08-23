@@ -49,11 +49,34 @@ void Bayonet_NVIC_SetGroup(Bayonet_NVIC_PriorityGroup NVIC_PriorityGroup)
 }
 
 /**
+  * @brief  Mapping ADC peripheral and IRQ channel. 
+  * @param  ADCx: The ADC device needed to map.
+  * @retval the IRQ channel of the ADC device. 
+  */
+uint8_t Bayonet_NVIC_GetIRQChannel_ADC(ADC_TypeDef* ADCx)
+{
+	if(ADCx == ADC1)
+		return ADC1_2_IRQn;
+#if !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_HD_VL)
+	else if(ADCx == ADC2)
+		return ADC1_2_IRQn;
+#endif
+#if defined (STM32F10X_HD) || defined (STM32F10X_XL)
+	else if(ADCx == ADC3)
+		return ADC3_IRQn;
+#endif
+	else
+		AssertFailed("ADC device does not exist in this device. ", __FILE__, __LINE__);
+	
+	return 1;
+}
+
+/**
   * @brief  Mapping Timer peripheral and IRQ channel. 
   * @param  TIMx: Timer needed to map.
   * @retval the IRQ channel of the Timer device. 
   */
-uint8_t Bayonet_NVIC_GetIRQChannel_TIM(TIM_TypeDef *TIMx, Bayonet_TIM_MODE mode)
+uint8_t Bayonet_NVIC_GetIRQChannel_TIM(TIM_TypeDef* TIMx, Bayonet_TIM_MODE mode)
 {
 	if(TIMx == TIM1)
 	{
@@ -90,7 +113,7 @@ uint8_t Bayonet_NVIC_GetIRQChannel_TIM(TIM_TypeDef *TIMx, Bayonet_TIM_MODE mode)
   * @param  CHx: DMA channel needed to map.
   * @retval the IRQ channel of the DMA device. 
   */
-uint8_t Bayonet_NVIC_GetIRQChannel_DMA(DMA_Channel_TypeDef *CHx)
+uint8_t Bayonet_NVIC_GetIRQChannel_DMA(DMA_Channel_TypeDef* CHx)
 {
 	if(CHx == DMA1_Channel1)
 		return DMA1_Channel1_IRQn;
@@ -136,7 +159,7 @@ uint8_t Bayonet_NVIC_GetIRQChannel_DMA(DMA_Channel_TypeDef *CHx)
   * @param  SPIx: SPI device needed to map.
   * @retval the IRQ channel of the SPI device. 
   */
-uint8_t Bayonet_NVIC_GetIRQChannel_SPI(SPI_TypeDef *SPIx)
+uint8_t Bayonet_NVIC_GetIRQChannel_SPI(SPI_TypeDef* SPIx)
 {
 	if(SPIx == SPI1)
 		return SPI1_IRQn;

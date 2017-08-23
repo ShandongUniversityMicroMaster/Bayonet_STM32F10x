@@ -49,6 +49,6 @@ void UART_Put_Char(unsigned char DataToSend);
 uint8_t UART_Get_Char(void);
 void AssertFailed(char *str, char *file, int line);
 void Bayonet_UART_SendString(USART_TypeDef *USARTx, char *str);
-void Bayonet_UART_EnableReceiveNotEmptyInterrupt(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority);
-void Bayonet_UART_EnableTransmissionCompleteInterrupt(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority);
+void Bayonet_UART_EnableInterrupt_RXNE(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority);
+void Bayonet_UART_EnableInterrupt_TC(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority);
 #endif

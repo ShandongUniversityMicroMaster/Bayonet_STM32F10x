@@ -64,11 +64,12 @@
 #define Bayonet_ADC_SampleTime_71Cycles5	0x00000006
 #define Bayonet_ADC_SampleTime_239Cycles5	0x00000007
 
-extern uint32_t ADC_Buff[3][20];
-extern uint32_t tableSequence[3][16];
+extern uint16_t ADC_Buff[3][20];
+extern uint8_t tableSequence[3][16];
 
-void Bayonet_ADC_Independent_Init(ADC_TypeDef *ADCx, uint32_t ADC_CHx);
-void Bayonet_ADC_IM_Init(ADC_TypeDef *ADCx, uint8_t length, uint32_t ADC_CHxs[], uint32_t SampleTime);
+void Bayonet_ADC_Init_OneTimeConversion(ADC_TypeDef *ADCx, uint32_t ADC_CHx);
+void Bayonet_ADC_Init_ContinuousConversion(ADC_TypeDef *ADCx, uint8_t length, uint32_t ADC_CHxs[], uint32_t SampleTime);
 uint16_t Bayonet_ADC_OneTime(ADC_TypeDef *ADCx, uint32_t channel);
+void Bayonet_ADC_EnableInterrupt_EOC(ADC_TypeDef *ADCx, uint8_t prePriority, uint8_t subPriority);
 
 #endif
