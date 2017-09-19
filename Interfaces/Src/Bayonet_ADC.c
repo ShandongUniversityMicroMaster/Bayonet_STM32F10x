@@ -182,12 +182,12 @@ void Bayonet_ADC_CLOCK_IO_Init(ADC_TypeDef *ADCx, Bayonet_ADC_Channel ADC_CHx)
 	if(ADC_CHx == Bayonet_ADC_Channel_10)	//PC0
 	{
 		RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
-		GPIOA->CRL &=~ (GPIO_CRL_CNF0 | GPIO_CRL_MODE0);
+		GPIOC->CRL &=~ (GPIO_CRL_CNF0 | GPIO_CRL_MODE0);
 	}
 	if(ADC_CHx == Bayonet_ADC_Channel_11)	//PC1
 	{
 		RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
-		GPIOA->CRL &=~ (GPIO_CRL_CNF1 | GPIO_CRL_MODE1);
+		GPIOC->CRL &=~ (GPIO_CRL_CNF1 | GPIO_CRL_MODE1);
 	}
 	if(ADC_CHx == Bayonet_ADC_Channel_12)	//PC2
 	{
