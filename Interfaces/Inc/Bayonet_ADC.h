@@ -70,8 +70,8 @@ typedef enum
 	Bayonet_ADC_SampleTime_239Cycles5
 }Bayonet_ADC_SampleTime;
 
-extern uint16_t ADC_Buff[3][20];
-extern uint8_t tableSequence[3][16];
+extern uint32_t ADC_Buff[3][20];
+extern Bayonet_ADC_Channel tableSequence[3][16];
 
 void Bayonet_ADC_Init_OneTimeConversion(ADC_TypeDef *ADCx, Bayonet_ADC_Channel ADC_CHx);
 void Bayonet_ADC_Init_ContinuousConversion(ADC_TypeDef *ADCx, uint8_t length, Bayonet_ADC_Channel ADC_CHxs[], Bayonet_ADC_SampleTime SampleTime);

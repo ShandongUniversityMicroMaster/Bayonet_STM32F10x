@@ -39,8 +39,8 @@
 #include <stdbool.h>
 
 bool Bayonet_ADC_isInit[3][16] = {0};
-uint8_t tableSequence[3][16] = {0};
-uint16_t ADC_Buff[3][20] = {0};
+Bayonet_ADC_Channel tableSequence[3][16] = {0};
+uint32_t ADC_Buff[3][20] = {0};
 
 /**
   * @brief  Configuring clock and IO.
@@ -349,6 +349,10 @@ void Bayonet_ADC_Init_ContinuousConversion(ADC_TypeDef *ADCx, uint8_t SequenceLe
 	for(i = 0;i < SequenceLength; i++)
 	{
 		Bayonet_ADC_CLOCK_IO_Init(ADCx, ADC_CHxs[i]);
+	}
+	
+	for(i = 0;i < SequenceLength; i++)
+	{
 		if(ADC_CHxs[i] < Bayonet_ADC_Channel_10)
 			ADCx->SMPR2 |= SampleTime << (3*ADC_CHxs[i]);
 		else
