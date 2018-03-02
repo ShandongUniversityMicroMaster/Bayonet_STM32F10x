@@ -37,6 +37,9 @@
 
 #include "stm32f10x.h"
 #include "Bayonet_Config.h"
+#include <stdbool.h>
+
+extern bool Bayonet_TIM_isTIM2Remaped;
 
 typedef enum{
 	Bayonet_TIM_MODE_INT, 
@@ -45,10 +48,10 @@ typedef enum{
 }Bayonet_TIM_MODE;
 
 typedef enum{
-	Bayonet_TIM_CH0, 
 	Bayonet_TIM_CH1, 
 	Bayonet_TIM_CH2, 
-	Bayonet_TIM_CH3
+	Bayonet_TIM_CH3, 
+	Bayonet_TIM_CH4
 }Bayonet_TIM_CHANNEL;
 
 typedef enum{

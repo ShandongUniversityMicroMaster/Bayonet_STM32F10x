@@ -40,6 +40,8 @@
 
 //Bayonet_TIM_MODE bayonetTIMMode[14][4] = {0};
 
+bool Bayonet_TIM_isTIM2Remaped = false;
+
 /**
   * @brief  Configuring clocks and IO port for the specific timer channel. 
   * @param  TIMx: where x can be (1..14) to select timer. 
@@ -62,15 +64,41 @@ uint32_t Bayonet_TIM_Clock_IO_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, B
 		freq = Bayonet_RCC_Active(Bayonet_RCC_TIM2);
 		if(Mode != Bayonet_TIM_MODE_INT)
 		{
-			port = GPIOA;
-			if(CHx == Bayonet_TIM_CH0)
-				pin = 0;
-			else if(CHx == Bayonet_TIM_CH1)
-				pin = 1;
-			else if(CHx == Bayonet_TIM_CH2)
-				pin = 2;
-			else if(CHx == Bayonet_TIM_CH3)
-				pin = 3;
+			if(!Bayonet_TIM_isTIM2Remaped)
+			{
+				port = GPIOA;
+				if(CHx == Bayonet_TIM_CH1)
+					pin = 0;
+				else if(CHx == Bayonet_TIM_CH2)
+					pin = 1;
+				else if(CHx == Bayonet_TIM_CH3)
+					pin = 2;
+				else if(CHx == Bayonet_TIM_CH4)
+					pin = 3;
+			}
+			else
+			{
+				if(CHx == Bayonet_TIM_CH1)
+				{
+					port = GPIOA;
+					pin = 15;
+				}
+				else if(CHx == Bayonet_TIM_CH2)
+				{
+					port = GPIOB;
+					pin = 3;
+				}
+				else if(CHx == Bayonet_TIM_CH3)
+				{
+					port = GPIOB;
+					pin = 10;
+				}
+				else if(CHx == Bayonet_TIM_CH4)
+				{
+					port = GPIOB;
+					pin = 11;
+				}
+			}
 		}
 	}
 	else if(TIMx == TIM3)
@@ -78,22 +106,22 @@ uint32_t Bayonet_TIM_Clock_IO_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, B
 		freq = Bayonet_RCC_Active(Bayonet_RCC_TIM3);
 		if(Mode != Bayonet_TIM_MODE_INT)
 		{
-			if(CHx == Bayonet_TIM_CH0)
+			if(CHx == Bayonet_TIM_CH1)
 			{
 				port = GPIOA;
 				pin = 6;
 			}
-			else if(CHx == Bayonet_TIM_CH1)
+			else if(CHx == Bayonet_TIM_CH2)
 			{
 				port = GPIOA;
 				pin = 7;
 			}
-			else if(CHx == Bayonet_TIM_CH2)
+			else if(CHx == Bayonet_TIM_CH3)
 			{
 				port = GPIOB;
 				pin = 0;
 			}
-			else if(CHx == Bayonet_TIM_CH3)
+			else if(CHx == Bayonet_TIM_CH4)
 			{
 				port = GPIOB;
 				pin = 1;
@@ -106,13 +134,13 @@ uint32_t Bayonet_TIM_Clock_IO_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, B
 		if(Mode != Bayonet_TIM_MODE_INT)
 		{
 			port = GPIOB;
-			if(CHx == Bayonet_TIM_CH0)
+			if(CHx == Bayonet_TIM_CH1)
 				pin = 6;
-			else if(CHx == Bayonet_TIM_CH1)
-				pin = 7;
 			else if(CHx == Bayonet_TIM_CH2)
-				pin = 8;
+				pin = 7;
 			else if(CHx == Bayonet_TIM_CH3)
+				pin = 8;
+			else if(CHx == Bayonet_TIM_CH4)
 				pin = 9;
 		}
 	}
@@ -123,13 +151,13 @@ uint32_t Bayonet_TIM_Clock_IO_Init(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, B
 		if(Mode != Bayonet_TIM_MODE_INT)
 		{
 			port = GPIOA;
-			if(CHx == Bayonet_TIM_CH0)
+			if(CHx == Bayonet_TIM_CH1)
 				pin = 0;
-			else if(CHx == Bayonet_TIM_CH1)
-				pin = 1;
 			else if(CHx == Bayonet_TIM_CH2)
-				pin = 2;
+				pin = 1;
 			else if(CHx == Bayonet_TIM_CH3)
+				pin = 2;
+			else if(CHx == Bayonet_TIM_CH4)
 				pin = 3;
 		}
 	}
@@ -182,7 +210,7 @@ void Bayonet_TIM_Init_Interrupt(TIM_TypeDef *TIMx, uint32_t microseconds, uint8_
 {
 	RCC_ClocksTypeDef Clock_Structure;
 	Bayonet_RCC_GetClocksFreq(&Clock_Structure);
-	Bayonet_TIM_Clock_IO_Init(TIMx, Bayonet_TIM_CH0, Bayonet_TIM_MODE_INT); //Dummy channel. 
+	Bayonet_TIM_Clock_IO_Init(TIMx, Bayonet_TIM_CH1, Bayonet_TIM_MODE_INT); //Dummy channel. 
 	
 	TIMx->PSC = Clock_Structure.SYSCLK_Frequency / 1000000 - 1;		//Prescale time count to 1 microsecond. Timer counts SYS_CLOCK. 
 	TIMx->ARR = microseconds;
@@ -227,22 +255,22 @@ void Bayonet_TIM_Init_PWMChannel(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uin
 	else
 		TIMx->PSC = Clock_Structure.PCLK1_Frequency / preScaler - 1;
 	
-	if(CHx == Bayonet_TIM_CH0)
+	if(CHx == Bayonet_TIM_CH1)
 	{
 		TIMx->CCMR1 |= TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2;	//PWM 1 mode. 
 		TIMx->CCER  |= TIM_CCER_CC1E;
 	}
-	else if(CHx == Bayonet_TIM_CH1)
+	else if(CHx == Bayonet_TIM_CH2)
 	{
 		TIMx->CCMR1 |= TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2;
 		TIMx->CCER  |= TIM_CCER_CC2E;
 	}
-	else if(CHx == Bayonet_TIM_CH2)
+	else if(CHx == Bayonet_TIM_CH3)
 	{
 		TIMx->CCMR2 |= TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2;
 		TIMx->CCER  |= TIM_CCER_CC3E;
 	}
-	else if(CHx == Bayonet_TIM_CH3)
+	else if(CHx == Bayonet_TIM_CH4)
 	{
 		TIMx->CCMR2 |= TIM_CCMR2_OC4M_1 | TIM_CCMR2_OC4M_2;
 		TIMx->CCER  |= TIM_CCER_CC4E;
@@ -263,13 +291,13 @@ void Bayonet_TIM_Init_PWMChannel(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uin
   */
 void Bayonet_TIM_PWM_Duty(TIM_TypeDef *TIMx, Bayonet_TIM_CHANNEL CHx, uint16_t dutyTime)
 {
-	if(CHx == Bayonet_TIM_CH0)
+	if(CHx == Bayonet_TIM_CH1)
 		TIMx->CCR1 = dutyTime;
-	else if(CHx == Bayonet_TIM_CH1)
-		TIMx->CCR2 = dutyTime;
 	else if(CHx == Bayonet_TIM_CH2)
-		TIMx->CCR3 = dutyTime;
+		TIMx->CCR2 = dutyTime;
 	else if(CHx == Bayonet_TIM_CH3)
+		TIMx->CCR3 = dutyTime;
+	else if(CHx == Bayonet_TIM_CH4)
 		TIMx->CCR4 = dutyTime;
 	else
 		AssertFailed("Timer channel not exist..", __FILE__, __LINE__);
