@@ -39,7 +39,7 @@
 #include <stdbool.h>
 
 bool Bayonet_ADC_isInit[3][16] = {0};
-Bayonet_ADC_Channel tableSequence[3][16] = {0};
+Bayonet_ADC_Channel tableSequence[3][16] = {Bayonet_ADC_Channel_0};
 uint32_t ADC_Buff[3][20] = {0};
 
 /**
