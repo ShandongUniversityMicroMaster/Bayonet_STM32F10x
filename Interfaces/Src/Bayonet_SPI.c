@@ -133,8 +133,8 @@ void Bayonet_SPI_Init_Slave(SPI_TypeDef *SPIx, uint8_t prePriority, uint8_t subP
 	Bayonet_SPI_Clock_IO_Init(SPIx, Bayonet_SPI_MODE_SLAVE);
 	
 	SPIx->CR1 &=~ SPI_CR1_DFF;				//8 bit data mode. 
-	SPIx->CR1 |= SPI_CR1_CPOL;
-	SPIx->CR1 |= SPI_CR1_CPHA;				//
+	//SPIx->CR1 |= SPI_CR1_CPOL;
+	//SPIx->CR1 |= SPI_CR1_CPHA;				//
 	SPIx->CR1 &=~ SPI_CR1_LSBFIRST;		//MSB first. 
 	SPIx->CR1 &=~ SPI_CR1_MSTR;				//Slave mode. 
 	SPIx->CR1 &=~ SPI_CR1_SSM;				//Hardware slave configuration.  
