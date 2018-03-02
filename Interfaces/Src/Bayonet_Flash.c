@@ -54,25 +54,6 @@ void Bayonet_FLASH_CheckAddressValid(uint32_t address)
 #endif
 
 /**
-  * @brief  Unlock the flash lock to allow write operation. 
-  * @retval None. 
-  */
-void Bayonet_FLASH_Unlock()
-{
-	FLASH->KEYR = Bayonet_FLASH_KEY1;
-	FLASH->KEYR = Bayonet_FLASH_KEY2;
-}
-
-/**
-  * @brief  Lock the flash lock to prevent from writing operation. 
-  * @retval None. 
-  */
-void Bayonet_FLASH_Lock()
-{
-	FLASH->CR |= FLASH_CR_LOCK;
-}
-
-/**
   * @brief  Read a buffer of halfword data from flash. 
   * @param  address: address to read. 
   * @param  buffer: pointer to the start of buffer. 

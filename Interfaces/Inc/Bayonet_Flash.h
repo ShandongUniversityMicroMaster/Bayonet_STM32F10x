@@ -42,6 +42,12 @@
 
 extern uint16_t Bayonet_FLASH_Buffer[1024];
 
+#define Bayonet_FLASH_Lock() 	{FLASH->CR |= FLASH_CR_LOCK;}
+#define Bayonet_FLASH_Unlock() 	{     \
+	FLASH->KEYR = Bayonet_FLASH_KEY1;   \
+	FLASH->KEYR = Bayonet_FLASH_KEY2;   \
+}
+
 void Bayonet_FLASH_ReadBuffer(uint32_t address, uint16_t *buffer, uint16_t count);
 void Bayonet_FLASH_WriteBuffer(uint32_t address, uint16_t *buffer, uint16_t count);
 
