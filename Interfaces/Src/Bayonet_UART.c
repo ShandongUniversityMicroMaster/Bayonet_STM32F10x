@@ -143,7 +143,12 @@ void Bayonet_UART_Init(USART_TypeDef *USARTx, uint32_t baudrate)
 	uint16_t fraction;
 	RCC_ClocksTypeDef Clocks;
 	Bayonet_RCC_GetClocksFreq(&Clocks);
-	temp = (float)(Clocks.PCLK2_Frequency)/(baudrate*16.0);
+	
+	/*   Only the clock of USART1 derives from PCLK2.   */
+	if(USARTx == USART1)
+		temp = (float)(Clocks.PCLK2_Frequency)/(baudrate*16.0);
+	else
+		temp = (float)(Clocks.PCLK1_Frequency)/(baudrate*16.0);
 	mantissa = temp;
 	fraction = (temp-mantissa)*16;
   mantissa <<= 4;
