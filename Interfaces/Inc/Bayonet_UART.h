@@ -51,4 +51,5 @@ void AssertFailed(char *str, char *file, int line);
 void Bayonet_UART_SendString(USART_TypeDef *USARTx, char *str);
 void Bayonet_UART_EnableInterrupt_RXNE(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority);
 void Bayonet_UART_EnableInterrupt_TC(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority);
+void Bayonet_UART_EnableInterrupt_TXE(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority);
 #endif

@@ -76,7 +76,6 @@ void AssertFailed(char *str, char *file, int line)
 	char strBuffer[200] = {0};
 	while(1)
 	{
-		Bayonet_Delay_Ms(100);
 		sprintf(strBuffer, "%s, file: %s, line: %d", str, file, line); 
 		//printf("Assert Failed!:%s\r\n", str);
 	}
@@ -212,6 +211,22 @@ void Bayonet_UART_Init(USART_TypeDef *USARTx, uint32_t baudrate)
  	USARTx->BRR=mantissa;
 	USARTx->CR1 |= USART_CR1_UE | USART_CR1_TE | USART_CR1_RE;
 	Bayonet_UART_isInit[Bayonet_UART_GetIndex(USARTx)] = true;
+}
+
+/**
+  * @brief  Enable transmission register empty interrupt of the specific UART. 
+  * @param  USARTx: where x can be (1..6) to select the peripheral.
+  * @param  prePriority: prePriority for interrupt. 
+  * @param  subPriority: subPriority for interrupt. 
+  * @retval None
+  */
+void Bayonet_UART_EnableInterrupt_TXE(USART_TypeDef *USARTx, uint8_t prePriority, uint8_t subPriority)
+{
+	if(!Bayonet_UART_isInit[Bayonet_UART_GetIndex(USARTx)])
+		AssertFailed("The specific UART port has not been initialized. ", __FILE__, __LINE__);
+	
+	UART_NVIC_Configuration(USARTx, prePriority, subPriority);
+	USARTx->CR1 |= USART_CR1_TXEIE;
 }
 
 /**
